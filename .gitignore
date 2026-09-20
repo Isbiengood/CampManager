@@ -21,3 +21,6 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+# Deployment-specific browser configuration
+web/config.js
