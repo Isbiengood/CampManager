@@ -1,0 +1,23 @@
+# Secrets / local environment
+.env
+.env.*
+!.env.example
+
+# Supabase local state
+.supabase/
+supabase/.temp/
+
+# Google / clasp local credentials
+.clasp.json
+.clasprc.json
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+*.bak
