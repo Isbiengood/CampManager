@@ -1,0 +1,4 @@
+project_id = "campmanager"
+
+[functions.campmanager-v4-bridge]
+verify_jwt = false
