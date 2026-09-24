@@ -1,0 +1,2452 @@
+
+<script>
+  /* CAMPMANAGER MOBILE — V3.2.10 — PRÉNOM PERSISTANT V2.1.2 */
+  const CLE_PRENOM =
+    "capfunMenagePrenom";
+
+  const INTERVALLE_SYNCHRO_MS =
+    15000;
+
+  const CLE_CACHE_LOGEMENTS =
+    "capfunMenageCacheLogements";
+
+  const CLE_FILE_ACTIONS =
+    "capfunMenageFileActions";
+
+  const CLE_PREF_VIBRATIONS =
+    "campManagerVibrations";
+
+  const CLE_PREF_SON =
+    "campManagerSon";
+
+  const CLE_PREF_MODE_SOMBRE =
+    "campManagerModeSombre";
+
+  const etat = {
+    prenom: "",
+    logements: [],
+    chargement: false,
+    personnes: [],
+    role: "inconnu",
+    femmeDeChambre: false,
+    gouvernante: false,
+    controlesAVenir: [],
+    idsLogementsConnus: [],
+    premierChargementTermine: false,
+    vibrationsActives: true,
+    sonActif: false,
+    modeSombre: false,
+    minuteurSynchronisation: null,
+    horsConnexion: false,
+    synchronisationFileEnCours: false
+  };
+
+  const elements = {};
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    initialiser
+  );
+
+  function initialiser() {
+    elements.ecranIdentification =
+      document.getElementById(
+        "ecranIdentification"
+      );
+
+    elements.ecranTravail =
+      document.getElementById(
+        "ecranTravail"
+      );
+
+    elements.choixPrenom =
+      document.getElementById(
+        "choixPrenom"
+      );
+
+    elements.boutonContinuer =
+      document.getElementById(
+        "boutonContinuer"
+      );
+
+    elements.boutonActualiser =
+      document.getElementById(
+        "boutonActualiser"
+      );
+
+    elements.boutonReglages =
+      document.getElementById(
+        "boutonReglages"
+      );
+
+    elements.voileReglages =
+      document.getElementById("voileReglages");
+    elements.fermerReglages =
+      document.getElementById("fermerReglages");
+    elements.prenomReglages =
+      document.getElementById("prenomReglages");
+    elements.changerPrenomReglages =
+      document.getElementById("changerPrenomReglages");
+    elements.notificationsReglages =
+      document.getElementById("notificationsReglages");
+    elements.texteNotificationsReglages =
+      document.getElementById("texteNotificationsReglages");
+    elements.vibrationsReglages =
+      document.getElementById("vibrationsReglages");
+    elements.texteVibrationsReglages =
+      document.getElementById("texteVibrationsReglages");
+    elements.blocSonReglages =
+      document.getElementById("blocSonReglages");
+    elements.sonReglages =
+      document.getElementById("sonReglages");
+    elements.modeSombreReglages =
+      document.getElementById("modeSombreReglages");
+    elements.reinitialiserReglages =
+      document.getElementById("reinitialiserReglages");
+    elements.etatConnexionReglages =
+      document.getElementById("etatConnexionReglages");
+
+    elements.bonjourPrenom =
+      document.getElementById(
+        "bonjourPrenom"
+      );
+
+    elements.roleUtilisateur =
+      document.getElementById(
+        "roleUtilisateur"
+      );
+
+    elements.compteurLogements =
+      document.getElementById(
+        "compteurLogements"
+      );
+
+    elements.zoneControlesAVenir =
+      document.getElementById(
+        "zoneControlesAVenir"
+      );
+
+    elements.compteurControlesAVenir =
+      document.getElementById(
+        "compteurControlesAVenir"
+      );
+
+    elements.listeControlesAVenir =
+      document.getElementById(
+        "listeControlesAVenir"
+      );
+
+    elements.zoneStatut =
+      document.getElementById(
+        "zoneStatut"
+      );
+
+    elements.listeLogements =
+      document.getElementById(
+        "listeLogements"
+      );
+
+    elements.aucunLogement =
+      document.getElementById(
+        "aucunLogement"
+      );
+
+    elements.message =
+      document.getElementById(
+        "message"
+      );
+
+    elements.boutonReset =
+      document.getElementById(
+        "boutonReset"
+      );
+
+
+    elements.choixPrenom.addEventListener(
+      "change",
+      function() {
+        elements.boutonContinuer.disabled =
+          !elements.choixPrenom.value;
+      }
+    );
+
+    elements.boutonContinuer.addEventListener(
+      "click",
+      memoriserPrenom
+    );
+
+    elements.boutonActualiser.addEventListener(
+      "click",
+      actualiser
+    );
+
+    if (
+      elements.boutonReset
+    ) {
+      elements.boutonReset.addEventListener(
+        "click",
+        reinitialiserReglagesCampManager_
+      );
+    }
+
+    if (
+      elements.boutonReglages
+    ) {
+      elements.boutonReglages.addEventListener(
+        "click",
+        ouvrirReglagesCampManager_
+      );
+    }
+
+    if (elements.fermerReglages) {
+      elements.fermerReglages.addEventListener(
+        "click",
+        fermerReglagesCampManager_
+      );
+    }
+
+    if (elements.changerPrenomReglages) {
+      elements.changerPrenomReglages.addEventListener(
+        "click",
+        demanderChangementPrenomCampManager_
+      );
+    }
+
+    if (elements.notificationsReglages) {
+      elements.notificationsReglages.addEventListener(
+        "change",
+        changerNotificationDepuisReglagesCampManager_
+      );
+    }
+
+    if (elements.vibrationsReglages) {
+      elements.vibrationsReglages.addEventListener(
+        "change",
+        function() {
+          etat.vibrationsActives = !!this.checked;
+          localStorage.setItem(
+            CLE_PREF_VIBRATIONS,
+            etat.vibrationsActives ? "1" : "0"
+          );
+        }
+      );
+    }
+
+    if (elements.sonReglages) {
+      elements.sonReglages.addEventListener(
+        "change",
+        function() {
+          etat.sonActif = !!this.checked;
+          localStorage.setItem(
+            CLE_PREF_SON,
+            etat.sonActif ? "1" : "0"
+          );
+        }
+      );
+    }
+
+    if (elements.modeSombreReglages) {
+      elements.modeSombreReglages.addEventListener(
+        "change",
+        function() {
+          etat.modeSombre = !!this.checked;
+          localStorage.setItem(
+            CLE_PREF_MODE_SOMBRE,
+            etat.modeSombre ? "1" : "0"
+          );
+          appliquerPreferencesCampManager_();
+        }
+      );
+    }
+
+    if (elements.reinitialiserReglages) {
+      elements.reinitialiserReglages.addEventListener(
+        "click",
+        reinitialiserReglagesCampManager_
+      );
+    }
+
+    if (elements.voileReglages) {
+      elements.voileReglages.addEventListener(
+        "click",
+        function(evenement) {
+          if (evenement.target === elements.voileReglages) {
+            fermerReglagesCampManager_();
+          }
+        }
+      );
+    }
+
+
+    document.addEventListener(
+      "visibilitychange",
+      gererRetourApplication
+    );
+
+    window.addEventListener(
+      "online",
+      gererRetourConnexion
+    );
+
+    window.addEventListener(
+      "offline",
+      gererPerteConnexion
+    );
+
+    window.addEventListener(
+      "message",
+      gererMessageParentCampManager_
+    );
+
+    chargerPreferencesLocalesCampManager_();
+    appliquerPreferencesCampManager_();
+
+    chargerDemarrage();
+  }
+
+  function reinitialiserApplication() {
+    arreterSynchronisationAutomatique();
+
+    localStorage.removeItem(
+      CLE_PRENOM
+    );
+
+    localStorage.removeItem(
+      "capfunMenageEquipe"
+    );
+
+    localStorage.removeItem(
+      CLE_PREF_VIBRATIONS
+    );
+
+    localStorage.removeItem(
+      CLE_PREF_SON
+    );
+
+    localStorage.removeItem(
+      CLE_PREF_MODE_SOMBRE
+    );
+
+    etat.prenom = "";
+    etat.logements = [];
+    etat.vibrationsActives = true;
+    etat.sonActif = false;
+    etat.modeSombre = false;
+
+    appliquerPreferencesCampManager_();
+
+    elements.listeLogements.innerHTML =
+      "";
+
+    elements.aucunLogement.classList.add(
+      "cache"
+    );
+
+    elements.ecranTravail.classList.add(
+      "cache"
+    );
+
+    elements.ecranIdentification.classList.remove(
+      "cache"
+    );
+
+    remplirPersonnes(
+      etat.personnes
+    );
+
+    elements.choixPrenom.value =
+      "";
+
+    elements.boutonContinuer.disabled =
+      true;
+
+    /*
+     * V2.1.2 :
+     * après reset, l'URL personnalisée doit disparaître.
+     *
+     * Dans CampManager actuel, si le conteneur GitHub existe,
+     * on lui demande un reset complet. Il efface son prénom,
+     * les préférences et l'identité OneSignal puis revient sur
+     * l'URL GitHub sans ?prenom=.
+     */
+    try {
+      if (
+        window.parent &&
+        window.parent !== window
+      ) {
+        window.parent.postMessage(
+          {
+            type:
+              "campmanager-reset-complet"
+          },
+          "*"
+        );
+
+        return;
+      }
+    } catch (erreur) {}
+
+    const urlApplication =
+      String(
+        window.CAPFUN_URL_APPLICATION || ""
+      ).trim();
+
+    if (
+      urlApplication
+    ) {
+      window.top.location.href =
+        urlApplication;
+
+      return;
+    }
+
+    afficherMessage(
+      "✅ Préférences réinitialisées. Choisissez votre prénom."
+    );
+  }
+
+
+  function chargerDemarrage() {
+    afficherStatut(
+      "Chargement…",
+      "attente"
+    );
+
+    google.script.run
+      .withSuccessHandler(
+        function(reponse) {
+          etat.personnes =
+            reponse.personnes || [];
+
+          const prenomUrl =
+            String(
+              window.CAPFUN_PRENOM_INITIAL || ""
+            ).trim();
+
+          if (
+            prenomUrl &&
+            contientPrenom(
+              etat.personnes,
+              prenomUrl
+            )
+          ) {
+            const prenomOfficiel =
+              obtenirPrenomOfficiel(
+                etat.personnes,
+                prenomUrl
+              );
+
+            localStorage.setItem(
+              CLE_PRENOM,
+              prenomOfficiel
+            );
+
+            ouvrirPourPrenom(
+              prenomOfficiel
+            );
+
+            return;
+          }
+
+          const prenomMemorise =
+            localStorage.getItem(
+              CLE_PRENOM
+            );
+
+          if (
+            prenomMemorise &&
+            contientPrenom(
+              etat.personnes,
+              prenomMemorise
+            )
+          ) {
+            ouvrirPourPrenom(
+              obtenirPrenomOfficiel(
+                etat.personnes,
+                prenomMemorise
+              )
+            );
+
+            return;
+          }
+
+          /*
+           * Un ancien choix V1 de binôme ne doit pas
+           * être repris dans la nouvelle version.
+           */
+          localStorage.removeItem(
+            "capfunMenageEquipe"
+          );
+
+          remplirPersonnes(
+            etat.personnes
+          );
+
+          elements.ecranIdentification.classList.remove(
+            "cache"
+          );
+
+          elements.ecranTravail.classList.add(
+            "cache"
+          );
+        }
+      )
+      .withFailureHandler(
+        gererErreur
+      )
+      .chargerApplicationMenageMobile();
+  }
+
+  function remplirPersonnes(personnes) {
+    elements.choixPrenom.innerHTML =
+      '<option value="">Choisir mon prénom</option>';
+
+    personnes.forEach(
+      function(personne) {
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          personne.prenom;
+
+        let suffixe =
+          "";
+
+        if (
+          personne.role ===
+          "gouvernante"
+        ) {
+          suffixe =
+            " 👑";
+        } else if (
+          personne.role ===
+          "menage"
+        ) {
+          suffixe =
+            " 🧹";
+        } else if (
+          personne.role ===
+          "mixte"
+        ) {
+          suffixe =
+            " 🧹👑";
+        }
+
+        option.textContent =
+          personne.prenom +
+          suffixe;
+
+        elements.choixPrenom.appendChild(
+          option
+        );
+      }
+    );
+
+    if (
+      personnes.length === 0
+    ) {
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value = "";
+      option.textContent =
+        "Aucun personnel disponible";
+
+      elements.choixPrenom.appendChild(
+        option
+      );
+    }
+  }
+
+  function memoriserPrenom() {
+    const prenom =
+      elements.choixPrenom.value;
+
+    if (!prenom) {
+      return;
+    }
+
+    /*
+     * 1. Sauvegarde locale Apps Script :
+     *    comportement exact conservé de V2.1.2.
+     */
+    localStorage.setItem(
+      CLE_PRENOM,
+      prenom
+    );
+
+    /*
+     * 2. Informe GitHub/OneSignal comme en V3.2.
+     *    Cela reste utile pour associer les notifications.
+     */
+    notifierParentPrenomV32_(
+      prenom
+    );
+
+    /*
+     * 3. PRINCIPE V2.1.2 RESTAURÉ :
+     *
+     *    le clic Continuer provoque une vraie navigation du
+     *    niveau supérieur vers une URL personnalisée.
+     *
+     *    Différence volontaire avec l'ancienne V2.1.2 :
+     *    on revient vers GitHub Pages, et non directement vers
+     *    Apps Script, afin de conserver OneSignal.
+     *
+     *    La page GitHub reçoit ?prenom=..., l'enregistre elle-même
+     *    dans son stockage de premier niveau, puis recharge Apps Script
+     *    avec ce prénom.
+     *
+     *    On ne dépend donc plus uniquement de postMessage sur iPhone.
+     */
+    const urlConteneur =
+      String(
+        window.CAMPMANAGER_URL_CONTENEUR || ""
+      ).trim();
+
+    if (
+      urlConteneur
+    ) {
+      window.top.location.href =
+        urlConteneur +
+        (
+          urlConteneur.indexOf("?") === -1
+            ? "?"
+            : "&"
+        ) +
+        "prenom=" +
+        encodeURIComponent(
+          prenom
+        );
+
+      return;
+    }
+
+    /*
+     * Ouverture directe Apps Script :
+     * fallback historique V2.1.2.
+     */
+    const urlApplication =
+      String(
+        window.CAPFUN_URL_APPLICATION || ""
+      ).trim();
+
+    if (
+      urlApplication &&
+      window.parent === window
+    ) {
+      window.top.location.href =
+        urlApplication +
+        "?prenom=" +
+        encodeURIComponent(
+          prenom
+        );
+
+      return;
+    }
+
+    ouvrirPourPrenom(
+      prenom
+    );
+  }
+
+  function ouvrirPourPrenom(prenom) {
+    etat.prenom =
+      prenom;
+
+    notifierParentPrenomV32_(
+      prenom
+    );
+
+    elements.bonjourPrenom.textContent =
+      "Bonjour " +
+      prenom +
+      " 👋";
+
+    elements.ecranIdentification.classList.add(
+      "cache"
+    );
+
+    elements.ecranTravail.classList.remove(
+      "cache"
+    );
+
+    chargerCacheLocal();
+
+    chargerLogements(
+      false
+    );
+
+    demarrerSynchronisationAutomatique();
+  }
+
+  function gererPerteConnexion() {
+    etat.horsConnexion = true;
+
+    chargerCacheLocal();
+
+    afficherStatutHorsConnexion();
+  }
+
+
+  function gererRetourConnexion() {
+    etat.horsConnexion = false;
+
+    synchroniserActionsEnAttente();
+  }
+
+
+  function chargerCacheLocal() {
+    try {
+      const brut =
+        localStorage.getItem(
+          CLE_CACHE_LOGEMENTS
+        );
+
+      if (!brut) {
+        return;
+      }
+
+      const cache =
+        JSON.parse(
+          brut
+        );
+
+      if (
+        !cache ||
+        cache.prenom !==
+          etat.prenom ||
+        !Array.isArray(
+          cache.logements
+        )
+      ) {
+        return;
+      }
+
+      etat.role =
+        cache.role || etat.role;
+
+      etat.femmeDeChambre =
+        !!cache.femmeDeChambre;
+
+      etat.gouvernante =
+        !!cache.gouvernante;
+
+      etat.controlesAVenir =
+        cache.controlesAVenir || [];
+
+      etat.logements =
+        cache.logements;
+
+      afficherRoleUtilisateur();
+      afficherControlesAVenir();
+
+      afficherLogements();
+
+    } catch (erreur) {
+      console.warn(
+        "Cache local illisible :",
+        erreur
+      );
+    }
+  }
+
+
+  function enregistrerCacheLocal() {
+    try {
+      localStorage.setItem(
+        CLE_CACHE_LOGEMENTS,
+        JSON.stringify({
+          prenom:
+            etat.prenom,
+          role:
+            etat.role,
+          femmeDeChambre:
+            etat.femmeDeChambre,
+          gouvernante:
+            etat.gouvernante,
+          controlesAVenir:
+            etat.controlesAVenir,
+          logements:
+            etat.logements,
+          enregistreLe:
+            new Date().toISOString()
+        })
+      );
+    } catch (erreur) {
+      console.warn(
+        "Impossible d'enregistrer le cache local :",
+        erreur
+      );
+    }
+  }
+
+
+  function lireFileActions() {
+    try {
+      const brut =
+        localStorage.getItem(
+          CLE_FILE_ACTIONS
+        );
+
+      if (!brut) {
+        return [];
+      }
+
+      const file =
+        JSON.parse(
+          brut
+        );
+
+      return Array.isArray(file)
+        ? file
+        : [];
+
+    } catch (erreur) {
+      return [];
+    }
+  }
+
+
+  function enregistrerFileActions(
+    file
+  ) {
+    localStorage.setItem(
+      CLE_FILE_ACTIONS,
+      JSON.stringify(
+        file
+      )
+    );
+  }
+
+
+  function ajouterActionEnAttente(
+    logement,
+    nouvelEtat
+  ) {
+    const file =
+      lireFileActions();
+
+    file.push({
+      id:
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2),
+
+      logement:
+        logement.logement,
+
+      prenom:
+        etat.prenom,
+
+      etatAvant:
+        logement.etatMenage,
+
+      etatApres:
+        nouvelEtat,
+
+      creeLe:
+        new Date().toISOString()
+    });
+
+    enregistrerFileActions(
+      file
+    );
+
+    appliquerActionLocalement(
+      logement.logement,
+      nouvelEtat
+    );
+
+    afficherStatutHorsConnexion();
+  }
+
+
+  function appliquerActionLocalement(
+    numeroLogement,
+    nouvelEtat
+  ) {
+    etat.logements =
+      etat.logements
+        .map(
+          function(logement) {
+            if (
+              logement.logement !==
+              numeroLogement
+            ) {
+              return logement;
+            }
+
+            const copie =
+              Object.assign(
+                {},
+                logement
+              );
+
+            copie.etatMenage =
+              nouvelEtat;
+
+            copie.actionSuivante =
+              determinerActionSuivanteLocale(
+                nouvelEtat
+              );
+
+            return copie;
+          }
+        )
+        .filter(
+          function(logement) {
+            return (
+              logement.etatMenage !==
+              "Prêt"
+            );
+          }
+        );
+
+    enregistrerCacheLocal();
+
+    afficherLogements();
+  }
+
+
+  function determinerActionSuivanteLocale(
+    etatMenage
+  ) {
+    if (
+      etatMenage ===
+      "À faire"
+    ) {
+      return "À vérifier";
+    }
+
+    if (
+      etatMenage ===
+        "À vérifier" ||
+      etatMenage ===
+        "À recontrôler"
+    ) {
+      return "Prêt";
+    }
+
+    return "";
+  }
+
+
+  function afficherStatutHorsConnexion() {
+    const nombreActions =
+      lireFileActions().length;
+
+    afficherStatut(
+      "🟠 Hors connexion\n" +
+      nombreActions +
+      " action(s) en attente",
+      "attente"
+    );
+  }
+
+
+  function synchroniserActionsEnAttente() {
+    if (
+      etat.synchronisationFileEnCours
+    ) {
+      return;
+    }
+
+    const file =
+      lireFileActions();
+
+    if (
+      file.length === 0
+    ) {
+      chargerLogements(
+        true
+      );
+
+      return;
+    }
+
+    etat.synchronisationFileEnCours =
+      true;
+
+    afficherStatut(
+      "🔄 Synchronisation...",
+      "attente"
+    );
+
+    synchroniserProchaineAction(
+      file
+    );
+  }
+
+
+  function synchroniserProchaineAction(
+    file
+  ) {
+    if (
+      file.length === 0
+    ) {
+      enregistrerFileActions(
+        []
+      );
+
+      etat.synchronisationFileEnCours =
+        false;
+
+      chargerLogements(
+        true
+      );
+
+      afficherMessage(
+        "✅ Les actions hors connexion ont été synchronisées."
+      );
+
+      return;
+    }
+
+    const action =
+      file[0];
+
+    google.script.run
+      .withSuccessHandler(
+        function(reponse) {
+          if (
+            reponse &&
+            reponse.succes
+          ) {
+            file.shift();
+
+            enregistrerFileActions(
+              file
+            );
+
+            synchroniserProchaineAction(
+              file
+            );
+
+            return;
+          }
+
+          etat.synchronisationFileEnCours =
+            false;
+
+          afficherStatut(
+            "⚠️ Conflit de synchronisation",
+            "erreur"
+          );
+
+          afficherMessage(
+            reponse &&
+            reponse.message
+              ? reponse.message
+              : "Une action hors connexion n'a pas pu être synchronisée."
+          );
+        }
+      )
+      .withFailureHandler(
+        function() {
+          etat.synchronisationFileEnCours =
+            false;
+
+          etat.horsConnexion =
+            true;
+
+          afficherStatutHorsConnexion();
+        }
+      )
+      .avancerEtatMenageMobile({
+        logement:
+          action.logement,
+
+        prenom:
+          action.prenom,
+
+        etatActuel:
+          action.etatAvant
+      });
+  }
+
+
+  function actualiser() {
+    if (
+      etat.prenom
+    ) {
+      chargerLogements(
+        false
+      );
+    } else {
+      chargerDemarrage();
+    }
+  }
+
+
+  /**
+   * Démarre la synchronisation automatique.
+   * Une seule minuterie peut être active.
+   */
+  function demarrerSynchronisationAutomatique() {
+    arreterSynchronisationAutomatique();
+
+    etat.minuteurSynchronisation =
+      window.setInterval(
+        function() {
+          if (
+            document.visibilityState ===
+              "visible" &&
+            etat.prenom &&
+            !etat.chargement
+          ) {
+            chargerLogements(
+              true
+            );
+          }
+        },
+        INTERVALLE_SYNCHRO_MS
+      );
+  }
+
+
+  /**
+   * Arrête la synchronisation automatique.
+   */
+  function arreterSynchronisationAutomatique() {
+    if (
+      etat.minuteurSynchronisation
+    ) {
+      window.clearInterval(
+        etat.minuteurSynchronisation
+      );
+
+      etat.minuteurSynchronisation =
+        null;
+    }
+  }
+
+
+  /**
+   * Lorsqu'on revient dans l'application après l'avoir
+   * mise en arrière-plan, une mise à jour immédiate est lancée.
+   */
+  function gererRetourApplication() {
+    if (
+      document.visibilityState ===
+        "visible" &&
+      etat.prenom &&
+      !etat.chargement
+    ) {
+      chargerLogements(
+        true
+      );
+    }
+  }
+
+
+  function chargerLogements(
+    silencieux = false
+  ) {
+    if (
+      etat.chargement ||
+      !etat.prenom
+    ) {
+      return;
+    }
+
+    etat.chargement =
+      true;
+
+    if (
+      !silencieux
+    ) {
+      afficherStatut(
+        "Synchronisation en cours…",
+        "attente"
+      );
+    }
+
+    elements.boutonActualiser.disabled =
+      true;
+
+    google.script.run
+      .withSuccessHandler(
+        function(reponse) {
+          etat.role =
+            reponse.role || "inconnu";
+
+          etat.femmeDeChambre =
+            !!reponse.femmeDeChambre;
+
+          etat.gouvernante =
+            !!reponse.gouvernante;
+
+          etat.controlesAVenir =
+            reponse.controlesAVenir || [];
+
+          detecterNouveauxLogementsEtVibrerV32_(
+            reponse.logements || []
+          );
+
+          afficherRoleUtilisateur();
+          afficherControlesAVenir();
+
+          const actionsEnAttente =
+            lireFileActions();
+
+          if (
+            actionsEnAttente.length === 0
+          ) {
+            etat.logements =
+              reponse.logements || [];
+
+            enregistrerCacheLocal();
+
+            afficherLogements();
+          }
+
+          afficherStatut(
+            actionsEnAttente.length === 0
+              ? "🟢 Synchronisé"
+              : "🟠 " +
+                actionsEnAttente.length +
+                " action(s) en attente de synchronisation",
+            actionsEnAttente.length === 0
+              ? "ok"
+              : "attente"
+          );
+
+          etat.chargement =
+            false;
+
+          elements.boutonActualiser.disabled =
+            false;
+        }
+      )
+      .withFailureHandler(
+        function(erreur) {
+          etat.chargement =
+            false;
+
+          elements.boutonActualiser.disabled =
+            false;
+
+          etat.horsConnexion = true;
+
+          chargerCacheLocal();
+
+          afficherStatutHorsConnexion();
+
+          if (
+            !silencieux
+          ) {
+            afficherMessage(
+              "Connexion indisponible. La dernière liste enregistrée reste utilisable."
+            );
+          }
+        }
+      )
+      .chargerLogementsPersonneMenageMobile(
+        etat.prenom
+      );
+  }
+
+  function afficherRoleUtilisateur() {
+    if (
+      !elements.roleUtilisateur
+    ) {
+      return;
+    }
+
+    elements.roleUtilisateur.className =
+      "role-utilisateur";
+
+    if (
+      etat.role ===
+      "gouvernante"
+    ) {
+      elements.roleUtilisateur.textContent =
+        "👑 Gouvernante";
+
+      elements.roleUtilisateur.classList.add(
+        "gouvernante"
+      );
+
+      elements.bonjourPrenom.textContent =
+        "👑 Bonjour " +
+        etat.prenom;
+
+      return;
+    }
+
+    if (
+      etat.role ===
+      "mixte"
+    ) {
+      elements.roleUtilisateur.textContent =
+        "🧹 Ménage + 👑 Gouvernante";
+
+      elements.bonjourPrenom.textContent =
+        "Bonjour " +
+        etat.prenom +
+        " 👋";
+
+      return;
+    }
+
+    elements.roleUtilisateur.textContent =
+      "🧹 Femme de chambre";
+
+    elements.roleUtilisateur.classList.add(
+      "menage"
+    );
+
+    elements.bonjourPrenom.textContent =
+      "🧹 Bonjour " +
+      etat.prenom;
+  }
+
+
+  /**
+   * Informe le conteneur GitHub Pages du prénom actif.
+   */
+  /**
+   * ==========================================================
+   * CAMPMANAGER MOBILE — RÉGLAGES UTILISATEUR
+   * ==========================================================
+   */
+
+  function ouvrirReglagesCampManager_() {
+    if (!elements.voileReglages) {
+      afficherMessage("⚙️ Impossible d’ouvrir les réglages.");
+      return;
+    }
+
+    elements.prenomReglages.textContent =
+      etat.prenom || "Aucun prénom sélectionné";
+
+    elements.vibrationsReglages.checked =
+      !!etat.vibrationsActives;
+
+    elements.sonReglages.checked =
+      !!etat.sonActif;
+
+    elements.modeSombreReglages.checked =
+      !!etat.modeSombre;
+
+    const vibrationDisponible =
+      typeof navigator.vibrate === "function";
+
+    elements.vibrationsReglages.disabled =
+      !vibrationDisponible;
+
+    elements.texteVibrationsReglages.textContent =
+      vibrationDisponible
+        ? "Nouvelle tâche lorsque l’application est ouverte."
+        : "Non disponible dans ce navigateur. Les notifications système restent utilisables.";
+
+    elements.blocSonReglages.style.display =
+      appareilAndroidCampManager_()
+        ? "block"
+        : "none";
+
+    elements.etatConnexionReglages.textContent =
+      navigator.onLine
+        ? "🟢 En ligne"
+        : "🟠 Hors connexion";
+
+    if (window.parent && window.parent !== window) {
+      elements.notificationsReglages.disabled = false;
+      elements.texteNotificationsReglages.textContent = "Vérification…";
+
+      window.parent.postMessage(
+        {
+          type: "campmanager-notification-status-request",
+          prenom: etat.prenom || ""
+        },
+        "*"
+      );
+    } else {
+      elements.notificationsReglages.checked = false;
+      elements.notificationsReglages.disabled = true;
+      elements.texteNotificationsReglages.textContent =
+        "Disponible depuis l’adresse GitHub Pages de CampManager.";
+    }
+
+    elements.voileReglages.classList.remove("cache");
+    elements.voileReglages.setAttribute("aria-hidden", "false");
+  }
+
+
+  function fermerReglagesCampManager_() {
+    if (!elements.voileReglages) {
+      return;
+    }
+
+    elements.voileReglages.classList.add("cache");
+    elements.voileReglages.setAttribute("aria-hidden", "true");
+  }
+
+
+  function demanderChangementPrenomCampManager_() {
+    fermerReglagesCampManager_();
+
+    localStorage.removeItem(CLE_PRENOM);
+    etat.prenom = "";
+    arreterSynchronisationAutomatique();
+
+    elements.ecranTravail.classList.add("cache");
+    elements.ecranIdentification.classList.remove("cache");
+
+    remplirPersonnes(etat.personnes);
+
+    elements.choixPrenom.value = "";
+    elements.boutonContinuer.disabled = true;
+
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(
+          { type: "campmanager-change-prenom" },
+          "*"
+        );
+      }
+    } catch (erreur) {}
+  }
+
+
+  function changerNotificationDepuisReglagesCampManager_() {
+    if (!window.parent || window.parent === window) {
+      return;
+    }
+
+    const active =
+      !!elements.notificationsReglages.checked;
+
+    elements.texteNotificationsReglages.textContent =
+      active ? "Activation…" : "Désactivation…";
+
+    window.parent.postMessage(
+      {
+        type: "campmanager-notifications-set",
+        active: active,
+        prenom: etat.prenom || ""
+      },
+      "*"
+    );
+  }
+
+
+  function reinitialiserReglagesCampManager_() {
+    const confirmation =
+      confirm(
+        "Réinitialiser CampManager Mobile sur cet appareil ?\n\n" +
+        "Le prénom et les préférences locales seront supprimés.\n\n" +
+        "Une autorisation système refusée sur iPhone/Android doit toutefois " +
+        "être réactivée dans les réglages du téléphone."
+      );
+
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(
+          { type: "campmanager-notifications-reset" },
+          "*"
+        );
+      }
+    } catch (erreur) {}
+
+    fermerReglagesCampManager_();
+    reinitialiserApplication();
+  }
+
+
+
+
+  function chargerPreferencesLocalesCampManager_() {
+    const vibration =
+      localStorage.getItem(
+        CLE_PREF_VIBRATIONS
+      );
+
+    const son =
+      localStorage.getItem(
+        CLE_PREF_SON
+      );
+
+    const sombre =
+      localStorage.getItem(
+        CLE_PREF_MODE_SOMBRE
+      );
+
+    etat.vibrationsActives =
+      vibration === null
+        ? true
+        : vibration === "1";
+
+    etat.sonActif =
+      son === "1";
+
+    etat.modeSombre =
+      sombre === "1";
+  }
+
+
+  function appliquerPreferencesCampManager_() {
+    document.body.classList.toggle(
+      "mode-sombre",
+      !!etat.modeSombre
+    );
+  }
+
+
+  function gererMessageParentCampManager_(
+    evenement
+  ) {
+    const donnees =
+      evenement.data || {};
+
+    if (
+      donnees.type ===
+        "campmanager-notification-status"
+    ) {
+      if (elements.notificationsReglages) {
+        elements.notificationsReglages.disabled = false;
+        elements.notificationsReglages.checked = !!donnees.active;
+      }
+
+      if (elements.texteNotificationsReglages) {
+        elements.texteNotificationsReglages.textContent =
+          donnees.active
+            ? "Activées"
+            : (
+                donnees.permission
+                  ? "Désactivées pour CampManager"
+                  : "Non autorisées sur cet appareil"
+              );
+      }
+
+      return;
+    }
+
+    if (
+      donnees.type ===
+        "campmanager-preferences"
+    ) {
+      if (
+        typeof donnees.vibrations ===
+          "boolean"
+      ) {
+        etat.vibrationsActives =
+          donnees.vibrations;
+
+        localStorage.setItem(
+          CLE_PREF_VIBRATIONS,
+          donnees.vibrations
+            ? "1"
+            : "0"
+        );
+      }
+
+      if (
+        typeof donnees.son ===
+          "boolean"
+      ) {
+        etat.sonActif =
+          donnees.son;
+
+        localStorage.setItem(
+          CLE_PREF_SON,
+          donnees.son
+            ? "1"
+            : "0"
+        );
+      }
+
+      if (
+        typeof donnees.modeSombre ===
+          "boolean"
+      ) {
+        etat.modeSombre =
+          donnees.modeSombre;
+
+        localStorage.setItem(
+          CLE_PREF_MODE_SOMBRE,
+          donnees.modeSombre
+            ? "1"
+            : "0"
+        );
+      }
+
+      appliquerPreferencesCampManager_();
+
+      return;
+    }
+
+    if (
+      donnees.type ===
+        "campmanager-change-prenom"
+    ) {
+      localStorage.removeItem(
+        CLE_PRENOM
+      );
+
+      etat.prenom = "";
+      arreterSynchronisationAutomatique();
+
+      elements.ecranTravail.classList.add(
+        "cache"
+      );
+
+      elements.ecranIdentification.classList.remove(
+        "cache"
+      );
+
+      remplirPersonnes(
+        etat.personnes
+      );
+
+      elements.choixPrenom.value =
+        "";
+
+      elements.boutonContinuer.disabled =
+        true;
+
+      return;
+    }
+
+    if (
+      donnees.type ===
+        "campmanager-reset"
+    ) {
+      reinitialiserApplication();
+    }
+  }
+
+
+  function appareilAndroidCampManager_() {
+    return /Android/i.test(
+      navigator.userAgent || ""
+    );
+  }
+
+
+  function jouerSonNouvelleTacheCampManager_() {
+    try {
+      const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (
+        !AudioContext
+      ) {
+        return;
+      }
+
+      const contexte =
+        new AudioContext();
+
+      const oscillateur =
+        contexte.createOscillator();
+
+      const gain =
+        contexte.createGain();
+
+      oscillateur.type =
+        "sine";
+
+      oscillateur.frequency.value =
+        880;
+
+      gain.gain.setValueAtTime(
+        0.0001,
+        contexte.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.16,
+        contexte.currentTime +
+          0.02
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        contexte.currentTime +
+          0.28
+      );
+
+      oscillateur.connect(
+        gain
+      );
+
+      gain.connect(
+        contexte.destination
+      );
+
+      oscillateur.start();
+
+      oscillateur.stop(
+        contexte.currentTime +
+          0.30
+      );
+    } catch (erreur) {
+      // Le son est un confort : ne jamais bloquer l’application.
+    }
+  }
+
+
+  function notifierParentPrenomV32_(
+    prenom
+  ) {
+    try {
+      if (
+        window.parent &&
+        window.parent !==
+          window
+      ) {
+        window.parent.postMessage(
+          {
+            type:
+              "capfun-prenom",
+
+            prenom:
+              prenom
+          },
+          "*"
+        );
+      }
+    } catch (erreur) {
+      /*
+       * Aucun blocage de l'application si le parent
+       * n'est pas disponible.
+       */
+    }
+  }
+
+
+  /**
+   * Fait vibrer le téléphone lorsqu'un nouveau logement
+   * apparaît dans les tâches disponibles.
+   *
+   * Le premier chargement ne vibre jamais.
+   */
+  function detecterNouveauxLogementsEtVibrerV32_(
+    logements
+  ) {
+    const ids =
+      (
+        logements || []
+      )
+        .map(
+          function(logement) {
+            return (
+              String(
+                logement.mode || ""
+              ) +
+              "|" +
+              String(
+                logement.logement || ""
+              )
+            );
+          }
+        )
+        .filter(
+          function(id) {
+            return id !== "|";
+          }
+        );
+
+    if (
+      !etat.premierChargementTermine
+    ) {
+      etat.idsLogementsConnus =
+        ids;
+
+      etat.premierChargementTermine =
+        true;
+
+      return;
+    }
+
+    const nouveaux =
+      ids.filter(
+        function(id) {
+          return etat
+            .idsLogementsConnus
+            .indexOf(
+              id
+            ) ===
+              -1;
+        }
+      );
+
+    etat.idsLogementsConnus =
+      ids;
+
+    if (
+      nouveaux.length ===
+        0
+    ) {
+      return;
+    }
+
+    /*
+     * Vibration de secours lorsque l'application est ouverte.
+     * Le push système OneSignal gère l'alerte lorsqu'elle est fermée.
+     */
+    if (
+      etat.vibrationsActives &&
+      navigator.vibrate
+    ) {
+      navigator.vibrate([
+        250,
+        120,
+        250
+      ]);
+    }
+
+    if (
+      etat.sonActif &&
+      appareilAndroidCampManager_()
+    ) {
+      jouerSonNouvelleTacheCampManager_();
+    }
+  }
+
+
+  function afficherControlesAVenir() {
+    if (
+      !elements.zoneControlesAVenir ||
+      !elements.compteurControlesAVenir ||
+      !elements.listeControlesAVenir
+    ) {
+      return;
+    }
+
+    /*
+     * Cette zone est réservée aux gouvernantes.
+     * Une personne purement ménage ne la voit jamais.
+     */
+    if (
+      !etat.gouvernante
+    ) {
+      elements.zoneControlesAVenir.classList.add(
+        "cache"
+      );
+
+      elements.compteurControlesAVenir.textContent =
+        "";
+
+      elements.listeControlesAVenir.innerHTML =
+        "";
+
+      return;
+    }
+
+    const liste =
+      Array.isArray(
+        etat.controlesAVenir
+      )
+        ? etat.controlesAVenir
+        : [];
+
+    elements.zoneControlesAVenir.classList.remove(
+      "cache"
+    );
+
+    elements.compteurControlesAVenir.textContent =
+      liste.length === 0
+        ? "Aucun contrôle en attente de ménage."
+        : liste.length === 1
+          ? "1 logement sera à contrôler."
+          : liste.length +
+            " logements seront à contrôler.";
+
+    elements.listeControlesAVenir.innerHTML =
+      "";
+
+    liste.forEach(
+      function(logement) {
+        const carte =
+          document.createElement(
+            "div"
+          );
+
+        carte.className =
+          "carte-a-venir";
+
+        const numero =
+          document.createElement(
+            "div"
+          );
+
+        numero.className =
+          "numero-a-venir";
+
+        numero.textContent =
+          logement.logement;
+
+        const texte =
+          document.createElement(
+            "div"
+          );
+
+        texte.className =
+          "texte-a-venir";
+
+        texte.innerHTML =
+          "<strong>Ménage en cours</strong><br>" +
+          (
+            logement.personnel
+              ? "Affecté à : " +
+                echapperHtml(
+                  logement.personnel
+                )
+              : "Personnel non encore affecté"
+          );
+
+        carte.appendChild(
+          numero
+        );
+
+        carte.appendChild(
+          texte
+        );
+
+        elements.listeControlesAVenir.appendChild(
+          carte
+        );
+      }
+    );
+  }
+
+
+  function mettreAJourCompteurLogements() {
+    if (
+      !elements.compteurLogements
+    ) {
+      return;
+    }
+
+    const nombre =
+      etat.logements.length;
+
+    elements.compteurLogements.classList.remove(
+      "termine"
+    );
+
+    if (
+      nombre === 0
+    ) {
+      elements.compteurLogements.textContent =
+        etat.gouvernante &&
+        !etat.femmeDeChambre
+          ? "🎉 Tous vos contrôles sont terminés !"
+          : "🎉 Tous vos logements sont terminés !";
+
+      elements.compteurLogements.classList.add(
+        "termine"
+      );
+
+      return;
+    }
+
+    if (
+      etat.gouvernante &&
+      !etat.femmeDeChambre
+    ) {
+      elements.compteurLogements.textContent =
+        nombre === 1
+          ? "👑 1 logement à contrôler"
+          : "👑 " +
+            nombre +
+            " logements à contrôler";
+
+      return;
+    }
+
+    if (
+      etat.femmeDeChambre &&
+      !etat.gouvernante
+    ) {
+      elements.compteurLogements.textContent =
+        nombre === 1
+          ? "🧹 1 logement à nettoyer"
+          : "🧹 " +
+            nombre +
+            " logements à nettoyer";
+
+      return;
+    }
+
+    elements.compteurLogements.textContent =
+      nombre === 1
+        ? "🏠 1 tâche à traiter"
+        : "🏠 " +
+          nombre +
+          " tâches à traiter";
+  }
+
+  function afficherLogements() {
+    elements.listeLogements.innerHTML =
+      "";
+
+    mettreAJourCompteurLogements();
+
+    if (
+      etat.logements.length === 0
+    ) {
+      elements.aucunLogement.classList.remove(
+        "cache"
+      );
+
+      return;
+    }
+
+    elements.aucunLogement.classList.add(
+      "cache"
+    );
+
+    etat.logements.forEach(
+      function(logement) {
+        elements.listeLogements.appendChild(
+          creerCarteLogement(
+            logement
+          )
+        );
+      }
+    );
+  }
+
+  function creerCarteLogement(logement) {
+    const article =
+      document.createElement(
+        "article"
+      );
+
+    article.className =
+      "carte-logement " +
+      classePriorite(
+        logement.priorite
+      );
+
+    const bandeau =
+      document.createElement(
+        "div"
+      );
+
+    bandeau.className =
+      "bandeau-logement";
+
+    const numero =
+      document.createElement(
+        "div"
+      );
+
+    numero.className =
+      "numero-logement";
+
+    numero.textContent =
+      logement.logement;
+
+    const symboles =
+      document.createElement(
+        "div"
+      );
+
+    symboles.className =
+      "symboles";
+
+    symboles.textContent =
+      [
+        logement.priorite,
+        logement.acces
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+    bandeau.append(
+      numero,
+      symboles
+    );
+
+    const contenu =
+      document.createElement(
+        "div"
+      );
+
+    contenu.className =
+      "contenu-carte";
+
+    const affectation =
+      document.createElement(
+        "p"
+      );
+
+    affectation.className =
+      "etat-actuel";
+
+    if (
+      logement.mode ===
+      "controle"
+    ) {
+      affectation.innerHTML =
+        "👑 Contrôle : <strong>" +
+        echapperHtml(
+          logement.gouvernante
+        ) +
+        "</strong>";
+    } else {
+      affectation.innerHTML =
+        "🧹 Affectation : <strong>" +
+        echapperHtml(
+          logement.personnel
+        ) +
+        "</strong>";
+    }
+
+    const etatActuel =
+      document.createElement(
+        "p"
+      );
+
+    etatActuel.className =
+      "etat-actuel";
+
+    etatActuel.innerHTML =
+      "État actuel : <strong>" +
+      echapperHtml(
+        logement.etatMenage
+      ) +
+      "</strong>";
+
+    const bouton =
+      document.createElement(
+        "button"
+      );
+
+    bouton.type =
+      "button";
+
+    bouton.className =
+      "bouton-action";
+
+    bouton.dataset.action =
+      logement.actionSuivante;
+
+    bouton.textContent =
+      logement.actionSuivante ===
+        "À vérifier"
+        ? "VALIDER LE MÉNAGE"
+        : logement.actionSuivante ===
+            "Prêt"
+          ? "VALIDER : PRÊT"
+          : "Aucune action";
+
+    bouton.disabled =
+      !logement.actionSuivante;
+
+    bouton.addEventListener(
+      "click",
+      function() {
+        avancerEtat(
+          logement,
+          bouton
+        );
+      }
+    );
+
+    contenu.append(
+      affectation,
+      etatActuel,
+      bouton
+    );
+
+    article.append(
+      bandeau,
+      contenu
+    );
+
+    return article;
+  }
+
+  function avancerEtat(
+    logement,
+    bouton
+  ) {
+    if (
+      etat.chargement
+    ) {
+      return;
+    }
+
+    const nouvelEtat =
+      logement.actionSuivante;
+
+    if (
+      !nouvelEtat
+    ) {
+      return;
+    }
+
+    /*
+     * Si le navigateur sait déjà qu'il est hors ligne,
+     * on enregistre immédiatement l'action localement.
+     */
+    if (
+      navigator.onLine === false ||
+      etat.horsConnexion
+    ) {
+      ajouterActionEnAttente(
+        logement,
+        nouvelEtat
+      );
+
+      afficherMessage(
+        "📴 Action enregistrée hors connexion."
+      );
+
+      return;
+    }
+
+    bouton.disabled =
+      true;
+
+    /*
+     * V3.2.4 — bloque tout double appui pendant la validation.
+     */
+    etat.chargement =
+      true;
+
+    bouton.textContent =
+      "Enregistrement…";
+
+    afficherStatut(
+      "Enregistrement du logement " +
+      logement.logement +
+      "…",
+      "attente"
+    );
+
+    google.script.run
+      .withSuccessHandler(
+        function(reponse) {
+          if (
+            reponse &&
+            reponse.succes
+          ) {
+            afficherMessage(
+              reponse.message ||
+              "Mise à jour effectuée."
+            );
+
+            etat.chargement =
+              false;
+
+            chargerLogements(
+              false
+            );
+
+            return;
+          }
+
+          afficherMessage(
+            reponse &&
+            reponse.message
+              ? reponse.message
+              : "La modification n'a pas pu être appliquée."
+          );
+
+          etat.chargement =
+            false;
+
+          chargerLogements(
+            false
+          );
+        }
+      )
+      .withFailureHandler(
+        function() {
+          etat.chargement =
+            false;
+
+          etat.horsConnexion =
+            true;
+
+          ajouterActionEnAttente(
+            logement,
+            nouvelEtat
+          );
+
+          afficherMessage(
+            "📴 Connexion perdue : action conservée sur le téléphone."
+          );
+        }
+      )
+      .avancerEtatMenageMobile({
+        logement:
+          logement.logement,
+
+        prenom:
+          etat.prenom,
+
+        etatActuel:
+          logement.etatMenage
+      });
+  }
+
+  function contientPrenom(
+    personnes,
+    prenom
+  ) {
+    const cle =
+      normaliserCle(
+        prenom
+      );
+
+    return personnes.some(
+      function(personne) {
+        return (
+          normaliserCle(
+            personne.prenom
+          ) === cle
+        );
+      }
+    );
+  }
+
+  function obtenirPrenomOfficiel(
+    personnes,
+    prenom
+  ) {
+    const cle =
+      normaliserCle(
+        prenom
+      );
+
+    const personne =
+      personnes.find(
+        function(element) {
+          return (
+            normaliserCle(
+              element.prenom
+            ) === cle
+          );
+        }
+      );
+
+    return personne
+      ? personne.prenom
+      : prenom;
+  }
+
+  function normaliserCle(valeur) {
+    return String(
+      valeur || ""
+    )
+      .trim()
+      .toLocaleLowerCase(
+        "fr"
+      )
+      .normalize(
+        "NFD"
+      )
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      );
+  }
+
+  function classePriorite(priorite) {
+    if (
+      priorite === "⚠️"
+    ) {
+      return "priorite-attente";
+    }
+
+    if (
+      priorite === "🔴"
+    ) {
+      return "priorite-rouge";
+    }
+
+    if (
+      priorite === "🟣"
+    ) {
+      return "priorite-violette";
+    }
+
+    return "priorite-bleue";
+  }
+
+  function afficherStatut(
+    texte,
+    type
+  ) {
+    elements.zoneStatut.textContent =
+      texte;
+
+    elements.zoneStatut.className =
+      "statut statut-" +
+      type;
+  }
+
+  function afficherMessage(texte) {
+    elements.message.textContent =
+      texte;
+
+    elements.message.classList.remove(
+      "cache"
+    );
+
+    window.clearTimeout(
+      afficherMessage.minuteur
+    );
+
+    afficherMessage.minuteur =
+      window.setTimeout(
+        function() {
+          elements.message.classList.add(
+            "cache"
+          );
+        },
+        4500
+      );
+  }
+
+  function gererErreur(erreur) {
+    const message =
+      erreur &&
+      erreur.message
+        ? erreur.message
+        : String(
+            erreur ||
+            "Erreur inconnue"
+          );
+
+    afficherStatut(
+      "🔴 Erreur de synchronisation",
+      "erreur"
+    );
+
+    afficherMessage(
+      message
+    );
+  }
+
+  function echapperHtml(valeur) {
+    const div =
+      document.createElement(
+        "div"
+      );
+
+    div.textContent =
+      valeur || "";
+
+    return div.innerHTML;
+  }
+</script>
