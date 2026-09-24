@@ -28,6 +28,12 @@ Le retour mobile → Google Sheets est asynchrone. En pratique, un délai proche
 
 Ce comportement est acceptable pour l'usage terrain actuel et n'est pas traité comme un bug bloquant.
 
+## Import des réservations
+
+- Import multi-format eSeason à finaliser et tester : **.txt, .xls, .xlsx** (+ .csv en complément).
+- Le format .txt est prioritaire car il correspond à l'export eSeason utilisé sur le terrain.
+- Voir [Import des réservations](IMPORT_RESERVATIONS.md).
+
 ## À faire avant publication publique
 
 1. Exporter tous les fichiers Apps Script du MASTER.
