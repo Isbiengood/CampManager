@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#17365d">
+  <title>CampManager Mobile</title>
+
+  <?!= inclureWeb_("62_Web_Css"); ?>
+</head>
+
+<body>
+  <header class="entete">
+    <div>
+      <p class="sur-titre">CAPFUN GRAND CERF</p>
+      <h1>🏕️ CampManager Mobile</h1>
+    </div>
+
+    <div class="actions-entete">
+      <button
+        id="boutonReglages"
+        class="bouton-icone"
+        type="button"
+        aria-label="Réglages"
+        title="Réglages"
+      >
+        ⚙️
+      </button>
+
+      <button
+        id="boutonActualiser"
+        class="bouton-icone"
+        type="button"
+        aria-label="Actualiser"
+        title="Actualiser"
+      >
+        ↻
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section
+      id="ecranIdentification"
+      class="panneau"
+    >
+      <h2>Bienvenue</h2>
+
+      <p class="texte-secondaire">
+        Choisissez votre prénom. Il sera mémorisé sur ce téléphone. Vous pourrez le changer à tout moment avec ⚙️ Réglages.
+      </p>
+
+      <select
+        id="choixPrenom"
+        class="select-equipe"
+      >
+        <option value="">
+          Chargement…
+        </option>
+      </select>
+
+      <button
+        id="boutonContinuer"
+        class="bouton-principal"
+        type="button"
+        disabled
+      >
+        Continuer
+      </button>
+    </section>
+
+    <section
+      id="ecranTravail"
+      class="cache"
+    >
+      <div class="barre-equipe">
+        <div>
+          <p class="libelle-equipe">📅 Aujourd’hui</p>
+          <h2 id="bonjourPrenom"></h2>
+
+          <div
+            id="roleUtilisateur"
+            class="role-utilisateur"
+          ></div>
+
+          <div
+            id="compteurLogements"
+            class="compteur-logements"
+            aria-live="polite"
+          ></div>
+
+          <section
+            id="zoneControlesAVenir"
+            class="zone-controles-a-venir cache"
+          >
+            <div class="entete-a-venir">
+              <div>
+                <div class="titre-a-venir">
+                  📋 Contrôles à venir
+                </div>
+                <div
+                  id="compteurControlesAVenir"
+                  class="compteur-a-venir"
+                ></div>
+              </div>
+            </div>
+
+            <div
+              id="listeControlesAVenir"
+              class="liste-a-venir"
+            ></div>
+          </section>
+        </div>
+      </div>
+
+      <div
+        id="zoneStatut"
+        class="statut statut-attente"
+      >
+        Chargement…
+      </div>
+
+      <div
+        id="listeLogements"
+        class="liste-logements"
+      ></div>
+
+      <div
+        id="aucunLogement"
+        class="panneau-centre cache"
+      >
+        <div class="icone-vide">✅</div>
+        <h2>Aucun logement à traiter</h2>
+        <p>
+          Aucun logement ne vous est actuellement attribué.
+        </p>
+      </div>
+
+      <!--
+        Repris de Capfun Ménage Mobile V2.1.2 :
+        bouton de réinitialisation toujours accessible dans l'écran de travail.
+      -->
+      <div class="zone-reset">
+        <button
+          id="boutonReset"
+          class="bouton-reset"
+          type="button"
+        >
+          🔄 Réinitialiser CampManager
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- CAMPMANAGER V3.2.2 — RÉGLAGES INTÉGRÉS -->
+  <div
+    id="voileReglages"
+    class="voile-reglages cache"
+    aria-hidden="true"
+  >
+    <section
+      class="fenetre-reglages"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titreReglages"
+    >
+      <div class="entete-reglages">
+        <div>
+          <p class="sur-titre">CAMPMANAGER MOBILE</p>
+          <h2 id="titreReglages">⚙️ Réglages</h2>
+        </div>
+
+        <button
+          id="fermerReglages"
+          class="bouton-fermer-reglages"
+          type="button"
+          aria-label="Fermer les réglages"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div class="bloc-reglage">
+        <div class="titre-reglage">👤 Utilisateur</div>
+        <div id="prenomReglages" class="texte-reglage">—</div>
+        <button
+          id="changerPrenomReglages"
+          class="bouton-secondaire largeur-complete"
+          type="button"
+        >
+          Changer de prénom
+        </button>
+      </div>
+
+      <div class="bloc-reglage">
+        <label class="ligne-reglage">
+          <span>
+            <span class="titre-reglage">🔔 Notifications</span>
+            <span id="texteNotificationsReglages" class="texte-reglage">
+              Vérification…
+            </span>
+          </span>
+          <input
+            id="notificationsReglages"
+            class="interrupteur-reglage"
+            type="checkbox"
+          >
+        </label>
+      </div>
+
+      <div class="bloc-reglage">
+        <label class="ligne-reglage">
+          <span>
+            <span class="titre-reglage">📳 Vibrations</span>
+            <span id="texteVibrationsReglages" class="texte-reglage">
+              Nouvelle tâche lorsque l’application est ouverte.
+            </span>
+          </span>
+          <input
+            id="vibrationsReglages"
+            class="interrupteur-reglage"
+            type="checkbox"
+          >
+        </label>
+      </div>
+
+      <div id="blocSonReglages" class="bloc-reglage">
+        <label class="ligne-reglage">
+          <span>
+            <span class="titre-reglage">🔊 Son</span>
+            <span class="texte-reglage">
+              Petit signal sonore lors d’une nouvelle tâche (Android).
+            </span>
+          </span>
+          <input
+            id="sonReglages"
+            class="interrupteur-reglage"
+            type="checkbox"
+          >
+        </label>
+      </div>
+
+      <div class="bloc-reglage">
+        <label class="ligne-reglage">
+          <span>
+            <span class="titre-reglage">🌙 Mode sombre</span>
+            <span class="texte-reglage">
+              Affichage sombre sur cet appareil.
+            </span>
+          </span>
+          <input
+            id="modeSombreReglages"
+            class="interrupteur-reglage"
+            type="checkbox"
+          >
+        </label>
+      </div>
+
+      <button
+        id="reinitialiserReglages"
+        class="bouton-danger-reglages"
+        type="button"
+      >
+        🔄 Réinitialiser les autorisations
+      </button>
+
+      <div class="bloc-reglage">
+        <div class="titre-reglage">ℹ️ À propos</div>
+        <div class="texte-reglage">
+          <strong>CampManager Mobile</strong><br>
+          Version 3.2.10 — Prénom persistant V2.1.2<br>
+          Serveur : Capfun Grand Cerf
+        </div>
+        <div id="etatConnexionReglages" class="etat-connexion-reglages">—</div>
+      </div>
+    </section>
+  </div>
+
+  <div
+    id="message"
+    class="message cache"
+    role="status"
+  ></div>
+
+  <script>
+    window.CAPFUN_PRENOM_INITIAL =
+      <?!= prenomInitialJson ?>;
+
+    window.CAPFUN_URL_APPLICATION =
+      <?!= urlApplicationJson ?>;
+
+    window.CAMPMANAGER_URL_CONTENEUR =
+      <?!= urlConteneurJson ?>;
+  </script>
+
+  <?!= inclureWeb_("63_Web_Js"); ?>
+</body>
+</html>
