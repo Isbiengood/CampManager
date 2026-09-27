@@ -87,5 +87,5 @@ Les points particulièrement importants avant publication publique restent :
 - compte Google neuf ;
 - deuxième établissement réellement isolé ;
 - révocation d'un jeton de pont ;
-- imports eSeason réels représentatifs ;
+- imports du logiciel de réservation réels représentatifs ;
 - vérification finale de l'application web et du backend Supabase.
