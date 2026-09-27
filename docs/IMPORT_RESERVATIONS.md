@@ -71,8 +71,8 @@ Le parseur TXT / CSV est intégré dans `20_Import.gs` et l'ancienne version exp
 
 Avant publication publique, il reste utile de valider le fonctionnement avec des exports réels représentatifs, notamment :
 
-1. un vrai export eSeason `.txt` ;
-2. un vrai export eSeason `.xlsx` ;
+1. un vrai export de réservations `.txt` ;
+2. un vrai export de réservations `.xlsx` ;
 3. un `.csv` ;
 4. les accents et caractères français ;
 5. un séjour multi-hébergements ;
@@ -80,4 +80,4 @@ Avant publication publique, il reste utile de valider le fonctionnement avec des
 7. une annulation ;
 8. un départ anticipé déjà en cours, afin de vérifier que l'import conserve la logique métier actuelle.
 
-Le fichier eSeason réel de test peut être anonymisé : les noms clients ne sont pas nécessaires pour vérifier le format.
+Le fichier du logiciel de réservation réel de test peut être anonymisé : les noms clients ne sont pas nécessaires pour vérifier le format.
