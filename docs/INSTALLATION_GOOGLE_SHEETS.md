@@ -80,7 +80,7 @@ Les étapes métier suivantes sont :
 1. renseigner les logements ;
 2. renseigner le personnel et les gouvernantes ;
 3. vérifier l'accès CampManager V4 ;
-4. importer les réservations eSeason ;
+4. importer les réservations du logiciel de réservation ;
 5. lancer `testerCampManagerV4()` pour contrôler l'installation.
 
 ## Objectif futur
