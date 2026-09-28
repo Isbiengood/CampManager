@@ -258,6 +258,16 @@
 
   async function creerPin() {
     if (
+      !CFG.CONFIGURATION_VALIDE ||
+      !CFG.CAMPING_CODE
+    ) {
+      afficherErreur(
+        "Lien CampManager incomplet : aucun établissement n’est indiqué."
+      );
+      return;
+    }
+
+    if (
       navigator.onLine ===
       false
     ) {
@@ -339,8 +349,11 @@
         error
       } =
         await client.rpc(
-          "creer_pin_avec_activation_v4",
+          "creer_pin_avec_activation_multicamping_v4",
           {
+            p_camping_code:
+              CFG.CAMPING_CODE,
+
             p_prenom:
               prenom,
 
@@ -354,6 +367,19 @@
 
       if (error) {
         throw error;
+      }
+
+      if (
+        data &&
+        data.ok === false
+      ) {
+        throw new Error(
+          String(
+            data.error ||
+            data.message ||
+            "Accès refusé."
+          )
+        );
       }
 
       if (
