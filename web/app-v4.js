@@ -282,6 +282,16 @@
   }
 
   async function connexion() {
+    if (
+      !CFG.CONFIGURATION_VALIDE ||
+      !CFG.CAMPING_CODE
+    ) {
+      afficherErreurConnexion(
+        "Lien CampManager incomplet : aucun établissement n’est indiqué."
+      );
+      return;
+    }
+
     if (!estEnLigne()) {
       afficherErreurConnexion(
         "Pas de connexion Internet."
@@ -328,8 +338,11 @@
     try {
       const { data, error } =
         await client.rpc(
-          "connexion_preprod_v4",
+          "connexion_multicamping_v4",
           {
+            p_camping_code:
+              CFG.CAMPING_CODE,
+
             p_prenom:
               prenom,
 
@@ -340,6 +353,19 @@
 
       if (error) {
         throw error;
+      }
+
+      if (
+        data &&
+        data.ok === false
+      ) {
+        throw new Error(
+          String(
+            data.error ||
+            data.message ||
+            "Accès refusé."
+          )
+        );
       }
 
       if (
@@ -660,7 +686,7 @@
     try {
       const { data, error } =
         await client.rpc(
-          "charger_logements_preprod_v4",
+          "charger_logements_multicamping_v4",
           {
             p_token:
               token
@@ -803,7 +829,7 @@
     try {
       const { data, error } =
         await client.rpc(
-          "avancer_etat_menage_preprod_v4",
+          "avancer_etat_menage_multicamping_v4",
           {
             p_token:
               token,
@@ -902,7 +928,7 @@
     ) {
       try {
         await client.rpc(
-          "deconnexion_preprod_v4",
+          "deconnexion_multicamping_v4",
           {
             p_token:
               ancienToken
