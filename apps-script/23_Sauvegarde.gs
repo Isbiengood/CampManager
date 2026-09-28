@@ -615,7 +615,7 @@ function nettoyerEtatLocalApresReinitialisation_() {
   );
 
   /*
-   * Nettoyage de compatibilité avec l'ancienne version CAPFUN.
+   * Nettoyage de compatibilité avec une ancienne version.
    */
   proprietesDocument.deleteProperty(
     "CAPFUN_DERNIER_NETTOYAGE_PERSONNEL_RECEPTION"
