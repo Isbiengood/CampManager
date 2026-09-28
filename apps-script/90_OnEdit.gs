@@ -583,7 +583,7 @@ function initialiserReservationManuelleBase_(
         ).trim();
 
       /*
-       * Pour une réservation déjà issue d'eSeason,
+       * Pour une réservation déjà issue d'un import,
        * on ne change pas l'ID : une correction temporaire
        * (logement, catégorie...) sera écrasée au prochain import.
        */
@@ -679,7 +679,7 @@ function initialiserReservationManuelleBase_(
       .getActiveSpreadsheet()
       .toast(
         initialisees === 1
-          ? "Séjour manuel enregistré. eSeason le remplacera automatiquement lorsqu'il apparaîtra dans un prochain import."
+          ? "Séjour manuel enregistré. Il sera remplacé automatiquement lorsqu'une réservation correspondante apparaîtra dans un prochain import."
           : initialisees +
             " séjours manuels enregistrés.",
         "✅ Base",
