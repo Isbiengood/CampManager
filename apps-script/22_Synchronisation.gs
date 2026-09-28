@@ -1,11 +1,11 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * SYNCHRONISATION IMPORT ESEASON → BASE
+ * SYNCHRONISATION IMPORT → BASE
  * VERSION V3.1 — MULTI-HÉBERGEMENTS
  * ============================================================
  *
- * eSeason reste la référence officielle.
+ * La source importée reste la référence officielle.
  *
  * IMPORTANT :
  * plusieurs lignes peuvent avoir :
@@ -351,7 +351,7 @@ function synchroniserBaseDepuisImport(
    * uniquement dans la période couverte par l'export,
    * et uniquement pour des lignes d'origine Import.
    *
-   * On calcule combien de lignes eSeason existent pour chaque groupe.
+   * On calcule combien de lignes importées existent pour chaque groupe.
    * Si Base en contient davantage après appariement, les lignes importées
    * excédentaires sont annulées.
    */
@@ -685,7 +685,7 @@ function grouperBaseESeason_(
 
 
 /**
- * Appariment un-à-un d'un groupe eSeason avec Base.
+ * Appariment un-à-un d'un groupe importé avec Base.
  *
  * Priorités :
  * 1. logement identique ;
@@ -1339,7 +1339,7 @@ function construireBilanSynchronisationESeason_(
       : "";
 
   return (
-    "Synchronisation eSeason terminée.\n\n" +
+    "Synchronisation des réservations terminée.\n\n" +
     "Nouveaux séjours : " +
     resultat.ajoutees +
     "\nSéjours mis à jour : " +
@@ -1348,7 +1348,7 @@ function construireBilanSynchronisationESeason_(
     resultat.inchangees +
     "\nSéjours réactivés : " +
     resultat.reactivees +
-    "\nAjouts manuels rapprochés avec eSeason : " +
+    "\nAjouts manuels rapprochés avec l'import : " +
     resultat.manuellesRapprochees +
     "\nGroupes multi-hébergements : " +
     resultat.groupesMultiHebergements +
