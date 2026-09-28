@@ -51,7 +51,7 @@ const ORIGINE_RESERVATION = {
 /**
  * Colonnes de la feuille Import.
  *
- * Quel que soit le format source eSeason (.xlsx / .txt / .csv),
+ * Quel que soit le format source (.xlsx / .txt / .csv),
  * le module 20_Import normalise les données dans ces cinq colonnes :
  *
  * A Nom client
@@ -95,7 +95,7 @@ const COLONNES_BASE = {
 
   /*
    * Alias de compatibilité.
-   * Ne correspond plus à un numéro eSeason.
+   * Alias historique conservé pour compatibilité.
    */
   NUMERO_RESERVATION: 1,
 
