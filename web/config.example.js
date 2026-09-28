@@ -1,15 +1,15 @@
-/* CampManager V4 — configuration navigateur MULTI-CAMPING
+/* CampManager V4 — configuration navigateur MULTI-ÉTABLISSEMENT
  * Version Open Source — configuration exemple
  *
  * Principe :
- * - un seul site GitHub Pages pour tous les campings ;
- * - le camping est choisi par l'URL :
- *     ?camping=camping-du-lac
+ * - un seul site GitHub Pages pour tous les établissements ;
+ * - l'établissement est choisi par l'URL :
+ *     ?camping=etablissement-du-lac
  * - aucun établissement n'est codé en dur ;
  * - sans paramètre, le dernier établissement mémorisé est utilisé ;
- * - les sessions/prénoms/thèmes sont séparés par camping ;
+ * - les sessions/prénoms/thèmes sont séparés par établissement ;
  * - les anciens appels V4 sont automatiquement redirigés vers
- *   les nouveaux RPC Multi-Camping.
+ *   les nouveaux RPC multi-établissement.
  *
  * SÉCURITÉ :
  * La clé ci-dessous est une clé PUBLISHABLE prévue pour le navigateur.
@@ -93,7 +93,7 @@
 
 
   /*
-   * Chaque camping possède maintenant ses propres clés locales.
+   * Chaque établissement possède maintenant ses propres clés locales.
    * Ainsi un téléphone utilisé dans deux établissements ne mélange
    * jamais les sessions ou le prénom mémorisé.
    */
@@ -144,7 +144,7 @@
 
   /*
    * ============================================================
-   * ADAPTATEUR COMPATIBILITÉ V4 -> MULTI-CAMPING
+   * ADAPTATEUR COMPATIBILITÉ V4 -> MULTI-ÉTABLISSEMENT
    * ============================================================
    *
    * app-v4.js et pin-v4.js peuvent rester inchangés.
@@ -337,7 +337,7 @@
 
 
   /*
-   * Affichage discret du camping actif dans le bandeau.
+   * Affichage discret de l'établissement actif dans le bandeau.
    * On attend que le DOM soit disponible.
    */
   function afficherCampingActif_() {
