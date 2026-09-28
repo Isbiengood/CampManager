@@ -7,7 +7,7 @@
  * Ce fichier remplace EN ENTIER l'ancien fichier 10_Menu.
  *
  * Organisation finale :
- * - Import eSeason
+ * - Import des réservations
  * - Actualisation V4 sécurisée
  * - Tableau de bord
  * - CampManager V4
@@ -354,7 +354,7 @@ function construireMenusCampManagerV4() {
     )
     .addSeparator()
     .addItem(
-      "📥 Importer eSeason (.xlsx / .txt / .csv)",
+      "📥 Importer des réservations (.xlsx / .txt / .csv)",
       "ouvrirImportESeason"
     )
     .addItem(
@@ -3225,7 +3225,7 @@ function executerBasculeQuotidienneClientsReceptionV4() {
  *     Base/Logements -> Réception.
  *
  * Cela permet à un nouvel hôtel/camping de démarrer normalement sans
- * réintroduire le risque historique Parti -> Occupé du Grand Cerf.
+ * réintroduire le risque historique Parti -> Occupé.
  */
 
 
