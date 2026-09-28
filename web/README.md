@@ -25,6 +25,20 @@ Exemple :
 https://example.org/campmanager/?camping=etablissement-du-lac
 ```
 
+## API utilisée
+
+L'application appelle directement les RPC multi-établissement actuels :
+
+- `connexion_multicamping_v4` ;
+- `creer_pin_avec_activation_multicamping_v4` ;
+- `charger_logements_multicamping_v4` ;
+- `avancer_etat_menage_multicamping_v4` ;
+- `deconnexion_multicamping_v4`.
+
+Il n'y a plus de couche de compatibilité avec les anciens RPC `*_preprod_v4`.
+
+Le paramètre technique `?camping=` est conservé pour compatibilité avec les liens générés par CampManager, mais il représente le code de l'établissement.
+
 ## Sécurité
 
 Le navigateur peut contenir une clé Supabase **publishable**.
