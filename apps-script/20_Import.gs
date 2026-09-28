@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * IMPORT DIRECT ESEASON (.XLSX / .TXT / .CSV)
+ * IMPORT DIRECT DE RÉSERVATIONS (.XLSX / .TXT / .CSV)
  * VERSION 1.4 OPEN SOURCE — 25/09/2026
  * ============================================================
  *
@@ -30,7 +30,7 @@
 
 
 /**
- * Ouvre la fenêtre de sélection du fichier eSeason.
+ * Ouvre la fenêtre de sélection du fichier d'import.
  */
 function ouvrirImportESeason() {
   const html =
@@ -49,7 +49,7 @@ function ouvrirImportESeason() {
     .getUi()
     .showModalDialog(
       html,
-      "📥 Importer eSeason"
+      "📥 Importer des réservations"
     );
 }
 
@@ -91,7 +91,7 @@ function preparerImportESeason(
     !estTexte
   ) {
     throw new Error(
-      "Sélectionnez un export eSeason au format .xlsx, .txt ou .csv."
+      "Sélectionnez un export de réservations au format .xlsx, .txt ou .csv."
     );
   }
 
@@ -370,7 +370,7 @@ function annulerImportESeason(
 
 
 /**
- * Lit les 5 colonnes utiles de l'export eSeason.
+ * Lit les 5 colonnes utiles de l'export de réservations.
  */
 function lireExportESeasonDepuisFichierTemporaire_(
   id
@@ -388,7 +388,7 @@ function lireExportESeasonDepuisFichierTemporaire_(
       0
   ) {
     throw new Error(
-      "Le fichier eSeason ne contient aucune feuille."
+      "Le fichier importé ne contient aucune feuille."
     );
   }
 
@@ -418,7 +418,7 @@ function extraireDonneesESeasonDepuisMatrice_(
       2
   ) {
     throw new Error(
-      "L'export eSeason est vide."
+      "L'export de réservations est vide."
     );
   }
 
@@ -505,7 +505,7 @@ function extraireDonneesESeasonDepuisMatrice_(
           -1
       ) {
         throw new Error(
-          "Colonne eSeason introuvable : " +
+          "Colonne requise introuvable : " +
           cle +
           "."
         );
@@ -1363,7 +1363,7 @@ function analyserImportESeason_(
 
 
 /**
- * Écrit les données eSeason dans Import.
+ * Écrit les données importées dans la feuille Import.
  *
  * La feuille Import reste modifiable :
  * un switch de logement peut donc être corrigé directement
@@ -1467,7 +1467,7 @@ function supprimerFichierTemporaireESeason_(
       );
   } catch (erreur) {
     console.log(
-      "Fichier temporaire eSeason non supprimé : " +
+      "Fichier temporaire d'import non supprimé : " +
       erreur.message
     );
   }
@@ -1591,8 +1591,8 @@ button{
 </head>
 <body>
 <div class="carte">
-<h2>📥 Import eSeason</h2>
-<p>Sélectionnez l’export eSeason au format <b>.xlsx</b>, <b>.txt</b> ou <b>.csv</b>.</p>
+<h2>📥 Import des réservations</h2>
+<p>Sélectionnez un export de réservations au format <b>.xlsx</b>, <b>.txt</b> ou <b>.csv</b>.</p>
 
 <input id="fichier" type="file" accept=".xlsx,.txt,.csv">
 
@@ -1649,7 +1649,7 @@ function analyser(){
           "✏️ Modifiés : " + r.modifiees + "<br>" +
           "✅ Inchangés : " + r.inchangees + "<br>" +
           "♻️ Réactivés : " + r.reactivees + "<br>" +
-          "🔗 Ajouts manuels retrouvés dans eSeason : " +
+          "🔗 Ajouts manuels retrouvés dans l’export : " +
             r.manuellesRapprochees + "<br>" +
           "🏘️ Groupes multi-hébergements : " +
             r.groupesMultiHebergements + "<br>" +
