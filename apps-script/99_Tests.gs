@@ -151,7 +151,7 @@ function testerCampManagerV4() {
       "synchroniserImport"
     ],
     [
-      "Import eSeason",
+      "Import des réservations",
       "ouvrirImportESeason"
     ],
     [
