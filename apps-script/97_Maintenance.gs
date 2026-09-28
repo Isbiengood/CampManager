@@ -613,7 +613,7 @@ function libererImportESeasonCampManagerV4() {
 
   const confirmation =
     ui.alert(
-      "📥 Libérer Import eSeason",
+      "📥 Libérer la feuille Import",
       "Cette réparation retire uniquement les protections qui bloquent la zone d’import des réservations dans la feuille Import.\n\n" +
         "Aucune donnée, formule ou réservation n’est supprimée.\n\n" +
         "À utiliser seulement si l’import affiche une erreur de cellule protégée.\n\n" +
