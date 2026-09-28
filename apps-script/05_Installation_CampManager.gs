@@ -474,7 +474,7 @@ function determinerFuseauInstallationCampManager_(
  * - clearContent() uniquement : formats, validations et formules
  *   situées hors des zones d'exploitation sont conservés ;
  * - aucune reconstruction globale de Réception ;
- * - aucun import eSeason ;
+ * - aucun import de réservations ;
  * - aucun appel Supabase ;
  * - aucun déclencheur n'est installé avant la fin du nettoyage.
  */
@@ -1709,11 +1709,11 @@ function verifierDependancesInstallationCampManager_() {
     ],
     [
       "bootstrapCampManagerV4_",
-      "96_Pont_Supabase_OpenSource"
+      "96b_Pont_Supabase_OpenSource"
     ],
     [
       "appelerRpcCampManagerOpenSource_",
-      "96_Pont_Supabase_OpenSource"
+      "96b_Pont_Supabase_OpenSource"
     ],
     [
       "installerActualisationAutomatiqueV4_20260827c",
