@@ -7,7 +7,7 @@
  *
  * LOGIQUE :
  *
- * eSeason -> Import -> Base
+ * Source -> Import -> Base
  *                    ^
  *                    |
  *          réservations manuelles
