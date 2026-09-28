@@ -25,7 +25,7 @@
  * - aucune dépendance OneSignal ;
  * - aucune clé API ;
  * - aucun External ID ;
- * - aucune référence Capfun / Grand Cerf.
+ * - aucune référence à un établissement ou éditeur spécifique.
  *
  * COMPATIBILITÉ
  * -------------
