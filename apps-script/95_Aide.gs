@@ -162,7 +162,7 @@ function creerPageAideCampManager() {
       ],
       [
         "Menu CampManager",
-        "Le menu 🏢 CampManager regroupe les fonctions utilisées au quotidien pour l'exploitation : import eSeason, actualisation, tableau de bord, application V4, tri / organisation de Réception, rapports, aide et maintenance courante."
+        "Le menu 🏢 CampManager regroupe les fonctions utilisées au quotidien pour l'exploitation : import des réservations, actualisation, tableau de bord, application V4, tri / organisation de Réception, rapports, aide et maintenance courante."
       ],
       [
         "Actualiser le logiciel",
@@ -177,12 +177,12 @@ function creerPageAideCampManager() {
         "Les tris permettent d'afficher plus facilement les logements Libres, Prêts ou Occupés en priorité. Un tri ne modifie pas l'état réel d'un logement."
       ],
       [
-        "Import eSeason",
-        "Les réservations eSeason arrivent dans Import puis alimentent Base. En fonctionnement normal, il n'est pas nécessaire de libérer ou réparer Import avant chaque chargement."
+        "Import des réservations",
+        "Les réservations importées arrivent dans Import puis alimentent Base. En fonctionnement normal, il n'est pas nécessaire de libérer ou réparer Import avant chaque chargement."
       ],
       [
         "Réservation manuelle",
-        "Une réservation créée manuellement doit être saisie dans Base. Les réservations provenant d'eSeason continuent d'être alimentées par Import."
+        "Une réservation créée manuellement doit être saisie dans Base. Les réservations provenant des imports continuent d'être alimentées par Import."
       ],
       [
         "Modification de séjour",
@@ -221,7 +221,7 @@ function creerPageAideCampManager() {
         "La synchronisation automatique fonctionne normalement sans intervention. Ne réinstallez la synchronisation que si elle ne fonctionne plus correctement."
       ],
       [
-        "Libérer Import eSeason",
+        "Libérer la feuille Import",
         "À utiliser uniquement si Import est réellement bloqué ou protégé et empêche le chargement. Cette opération n'est pas nécessaire avant chaque import."
       ],
       [
@@ -253,7 +253,7 @@ function creerPageAideCampManager() {
     [
       [
         "Avant de commencer",
-        "Travaillez principalement dans la feuille Réception. Les informations de réservation sont issues de Base, elle-même alimentée par Import eSeason."
+        "Travaillez principalement dans la feuille Réception. Les informations de réservation sont issues de Base, elle-même alimentée par la feuille Import."
       ],
       [
         "Client encore sur place",
