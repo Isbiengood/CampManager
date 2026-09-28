@@ -22,7 +22,7 @@ Cette partie contient l'interface mobile CampManager utilisée par le personnel 
 Exemple :
 
 ```text
-https://example.org/campmanager/?camping=camping-du-lac
+https://example.org/campmanager/?camping=etablissement-du-lac
 ```
 
 ## Sécurité
@@ -36,7 +36,7 @@ Il ne doit jamais contenir :
 - de jeton privé Apps Script / bridge ;
 - de code d'installation actif.
 
-Le contexte de l'établissement est contrôlé côté serveur par CampManager ; le paramètre `camping` de l'URL n'est pas, à lui seul, une preuve d'autorisation.
+Le contexte de l'établissement est contrôlé côté serveur par CampManager ; le paramètre technique `camping` de l'URL n'est pas, à lui seul, une preuve d'autorisation.
 
 ## Fonctions validées
 
