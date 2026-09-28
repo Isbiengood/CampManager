@@ -447,7 +447,7 @@ function creerMenuBackOfficeV4() {
   /*
    * Les outils techniques ne sont plus affichés comme un menu
    * « Admin V4 » séparé. Ils sont regroupés ici afin de garder
-   * seulement deux menus principaux visibles : CAPFUN et Accès V4.
+   * seulement les menus principaux nécessaires à l'exploitation.
    */
   const menuMaintenance =
     ui.createMenu(
@@ -467,7 +467,7 @@ function creerMenuBackOfficeV4() {
       )
       .addSeparator()
       .addItem(
-        "📥 Libérer Import eSeason",
+        "📥 Libérer la feuille Import",
         "libererImportESeasonCampManagerV4"
       )
       .addItem(
@@ -573,7 +573,7 @@ function reinstallerActualisationAutomatiqueDepuisMaintenanceV4() {
 
 /**
  * ============================================================
- * LIBÉRER UNIQUEMENT L'IMPORT ESEASON
+ * LIBÉRER UNIQUEMENT LA FEUILLE IMPORT
  * ============================================================
  *
  * Réparation ciblée : retire uniquement les protections qui peuvent
@@ -603,7 +603,7 @@ function libererImportESeasonCampManagerV4() {
 
   if (!feuille) {
     ui.alert(
-      "❌ Import eSeason",
+      "❌ Import des réservations",
       "La feuille Import est introuvable.",
       ui.ButtonSet.OK
     );
@@ -614,7 +614,7 @@ function libererImportESeasonCampManagerV4() {
   const confirmation =
     ui.alert(
       "📥 Libérer Import eSeason",
-      "Cette réparation retire uniquement les protections qui bloquent la zone d’import eSeason dans la feuille Import.\n\n" +
+      "Cette réparation retire uniquement les protections qui bloquent la zone d’import des réservations dans la feuille Import.\n\n" +
         "Aucune donnée, formule ou réservation n’est supprimée.\n\n" +
         "À utiliser seulement si l’import affiche une erreur de cellule protégée.\n\n" +
         "Continuer ?",
@@ -744,7 +744,7 @@ function libererImportESeasonCampManagerV4() {
   ui.alert(
     resultat.nonModifiables > 0
       ? "⚠️ Import partiellement libéré"
-      : "✅ Import eSeason libéré",
+      : "✅ Import des réservations libéré",
     "Protections retirées : " +
       totalSupprime +
       "\n\n• Plages Import : " +
@@ -757,7 +757,7 @@ function libererImportESeasonCampManagerV4() {
       (
         resultat.nonModifiables > 0
           ? "Si l’import reste bloqué, utilisez ensuite « Réparer toutes les protections Drive » depuis le compte propriétaire."
-          : "Vous pouvez maintenant relancer l’import eSeason."
+          : "Vous pouvez maintenant relancer l’import des réservations."
       ),
     ui.ButtonSet.OK
   );
@@ -781,7 +781,7 @@ function libererImportESeasonCampManagerV4() {
  * - nouveau camping / hôtel créé à partir d'une copie ;
  * - protections héritées d'un ancien propriétaire ;
  * - erreur "Vous tentez de modifier une cellule ou un objet protégés" ;
- * - blocage de l'import eSeason ou des synchronisations CampManager.
+ * - blocage de l'import des réservations ou des synchronisations CampManager.
  *
  * IMPORTANT :
  * - aucune donnée n'est supprimée ;
@@ -1018,7 +1018,7 @@ function installerMenuBackOfficeV4() {
 
   /*
    * Le menu Accès V4 est désormais construit par le même gestionnaire
-   * que le menu CAPFUN. On privilégie donc l'installateur principal,
+   * que le menu principal. On privilégie donc l'installateur principal,
    * ce qui évite deux déclencheurs « À l'ouverture » concurrents.
    */
   if (
