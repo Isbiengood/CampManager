@@ -114,6 +114,38 @@ function appliquerSecoursDriveMenageV3210_(
   );
 
   /*
+   * V3.2.11 — nettoyage visuel complet des colonnes de secours.
+   *
+   * Lorsqu'une dernière tâche passe sur Prêt, getLastRow() peut
+   * retomber sur la ligne d'en-tête. Sans ce nettoyage préalable,
+   * G/H restent vides mais conservent la couleur de l'ancien état
+   * (par exemple le jaune de « À vérifier »).
+   *
+   * On réinitialise donc toute la zone G:H sous les en-têtes avant
+   * de reconstruire les éventuelles lignes encore actives.
+   */
+  const nombreLignesSecoursNettoyage =
+    Math.max(
+      feuilleMenage.getMaxRows() -
+        LIGNES.DEBUT +
+        1,
+      1
+    );
+
+  feuilleMenage
+    .getRange(
+      LIGNES.DEBUT,
+      MENAGE_SECOURS_V3210.COLONNE_CHECK,
+      nombreLignesSecoursNettoyage,
+      2
+    )
+    .clearContent()
+    .clearDataValidations()
+    .setBackground("#ffffff")
+    .setFontColor("#000000")
+    .setFontWeight("normal");
+
+  /*
    * La colonne F reste technique et cachée.
    */
   try {
