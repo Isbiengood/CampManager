@@ -3005,6 +3005,325 @@ function traiterActionsV4VersDrive() {
 }
 
 
+
+/**
+ * Compatibilité V4 -> moteur Ménage Drive actuel.
+ *
+ * Le pont Supabase appelle cette fonction pour rejouer dans Google Sheets
+ * une action déjà validée côté mobile. Elle reprend les règles métier
+ * actuelles sans réintroduire l'ancien module mobile V3 complet.
+ *
+ * Transitions :
+ * - À faire -> À vérifier pour une femme de chambre ;
+ * - À faire -> Prêt pour une personne en double rôle ;
+ * - À vérifier / À recontrôler -> Prêt pour une gouvernante.
+ */
+function avancerEtatMenageMobile(
+  demande
+) {
+  const verrou =
+    LockService.getDocumentLock();
+
+  verrou.waitLock(
+    10000
+  );
+
+  try {
+    if (
+      !demande ||
+      !demande.logement ||
+      !demande.prenom ||
+      !demande.etatActuel
+    ) {
+      throw new Error(
+        "La demande est incomplète."
+      );
+    }
+
+    const logement =
+      normaliserValeurMenage(
+        demande.logement
+      );
+
+    const prenom =
+      String(
+        demande.prenom || ""
+      ).trim();
+
+    const clePrenom =
+      normaliserCleRoleMenageDriveV3210_(
+        prenom
+      );
+
+    const etatAttendu =
+      normaliserValeurMenage(
+        demande.etatActuel
+      );
+
+    const classeur =
+      SpreadsheetApp.getActiveSpreadsheet();
+
+    const feuilleMenage =
+      classeur.getSheetByName(
+        FEUILLES.MENAGE
+      );
+
+    const feuilleReception =
+      classeur.getSheetByName(
+        FEUILLES.RECEPTION
+      );
+
+    if (
+      !feuilleMenage ||
+      !feuilleReception
+    ) {
+      throw new Error(
+        "Les feuilles Ménage ou Réception sont introuvables."
+      );
+    }
+
+    /*
+     * Repart toujours de l'état Drive le plus récent.
+     */
+    mettreAJourMenage(
+      false
+    );
+
+    const ligneMenage =
+      trouverLigneMenageParLogement(
+        feuilleMenage,
+        logement
+      );
+
+    if (!ligneMenage) {
+      return {
+        succes: false,
+        conflit: true,
+        message:
+          "Le logement " +
+          logement +
+          " n'est plus dans la liste Ménage."
+      };
+    }
+
+    const ligneReception =
+      trouverLigneReceptionParLogement(
+        feuilleReception,
+        logement
+      );
+
+    if (!ligneReception) {
+      return {
+        succes: false,
+        conflit: true,
+        message:
+          "Le logement " +
+          logement +
+          " est introuvable dans Réception."
+      };
+    }
+
+    const personnelActuel =
+      normaliserPersonnelMenage_(
+        feuilleMenage
+          .getRange(
+            ligneMenage,
+            COLONNES_MENAGE.PERSONNEL
+          )
+          .getDisplayValue()
+      );
+
+    const gouvernanteActuelle =
+      String(
+        feuilleReception
+          .getRange(
+            ligneReception,
+            COLONNES_RECEPTION.GOUVERNANTE
+          )
+          .getDisplayValue() || ""
+      ).trim();
+
+    const celluleEtat =
+      feuilleMenage.getRange(
+        ligneMenage,
+        COLONNES_MENAGE.ETAT_MENAGE
+      );
+
+    const etatActuel =
+      normaliserValeurMenage(
+        celluleEtat.getValue()
+      );
+
+    if (
+      etatActuel !==
+        etatAttendu
+    ) {
+      return {
+        succes: false,
+        conflit: true,
+        message:
+          "L'état du logement " +
+          logement +
+          " a déjà changé. Actualisez la liste."
+      };
+    }
+
+    const carteRoles =
+      creerCarteRolesMenageDriveV3210_();
+
+    const role =
+      carteRoles[
+        clePrenom
+      ] || {
+        femmeDeChambre: false,
+        gouvernante: false
+      };
+
+    const estAffecteAuMenage =
+      decomposerPersonnelMenageDriveV3210_(
+        personnelActuel
+      ).some(
+        function(nom) {
+          return (
+            normaliserCleRoleMenageDriveV3210_(
+              nom
+            ) ===
+              clePrenom
+          );
+        }
+      );
+
+    const estAffecteAuControle =
+      decomposerPersonnelMenageDriveV3210_(
+        gouvernanteActuelle
+      ).some(
+        function(nom) {
+          return (
+            normaliserCleRoleMenageDriveV3210_(
+              nom
+            ) ===
+              clePrenom
+          );
+        }
+      );
+
+    let nouvelEtat =
+      "";
+
+    if (
+      etatActuel ===
+        ETAT_MENAGE.A_FAIRE &&
+      estAffecteAuMenage &&
+      role.femmeDeChambre
+    ) {
+      nouvelEtat =
+        role.gouvernante
+          ? ETAT_MENAGE.PRET
+          : ETAT_MENAGE.A_VERIFIER;
+    }
+
+    if (
+      (
+        etatActuel ===
+          ETAT_MENAGE.A_VERIFIER ||
+        etatActuel ===
+          ETAT_MENAGE.A_RECONTROLER
+      ) &&
+      estAffecteAuControle &&
+      role.gouvernante
+    ) {
+      nouvelEtat =
+        ETAT_MENAGE.PRET;
+    }
+
+    if (!nouvelEtat) {
+      return {
+        succes: false,
+        conflit: true,
+        message:
+          "Cette action n'est plus attribuée à " +
+          prenom +
+          ". Actualisez la liste."
+      };
+    }
+
+    celluleEtat.setValue(
+      nouvelEtat
+    );
+
+    SpreadsheetApp.flush();
+
+    const evenement = {
+      range:
+        celluleEtat,
+      value:
+        nouvelEtat,
+      oldValue:
+        etatActuel
+    };
+
+    if (
+      bloquerEtatMenageSiOccupe(
+        evenement
+      )
+    ) {
+      return {
+        succes: false,
+        conflit: true,
+        message:
+          "Le client est encore présent. La réception doit d'abord passer le logement sur Parti."
+      };
+    }
+
+    synchroniserEtatMenageVersReception(
+      evenement
+    );
+
+    if (
+      nouvelEtat ===
+        ETAT_MENAGE.PRET &&
+      typeof terminerAttenteClientPourLogementV323_ ===
+        "function"
+    ) {
+      terminerAttenteClientPourLogementV323_(
+        logement
+      );
+    }
+
+    SpreadsheetApp.flush();
+
+    mettreAJourMenage(
+      false
+    );
+
+    SpreadsheetApp.flush();
+
+    return {
+      succes: true,
+      logement:
+        logement,
+      ancienEtat:
+        etatActuel,
+      nouvelEtat:
+        nouvelEtat,
+      message:
+        nouvelEtat ===
+          ETAT_MENAGE.PRET
+          ? "Le logement " +
+            logement +
+            " est validé Prêt."
+          : "Le logement " +
+            logement +
+            " est envoyé à la gouvernante pour contrôle."
+    };
+
+  } finally {
+    verrou.releaseLock();
+  }
+}
+
+
+
 function traiterUneActionV4VersDrive_(
   action,
   bilan
