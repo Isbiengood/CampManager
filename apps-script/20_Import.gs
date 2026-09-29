@@ -997,7 +997,7 @@ function lireExportESeasonDepuisTexte_(
 
 /**
  * Crée un Google Sheet temporaire normalisé pour conserver
- * le résultat de la prévisualisation TXT / CSV jusqu'à la * confirmation de l'utilisateur.
+ * le résultat de la prévisualisation TXT / CSV jusqu'à la confirmation de l'utilisateur.
  */
 function creerFichierTemporaireESeasonDepuisDonnees_(
   donnees
