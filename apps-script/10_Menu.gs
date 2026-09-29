@@ -4511,7 +4511,19 @@ function actualiserLogicielV4Securise20260827() {
 
   try {
     /*
-     * 0. Paramètres -> listes techniques disponibles.
+     * 0. Première initialisation d'un nouvel établissement.
+     *
+     * Cette fonction ne reconstruit Réception que si elle est encore
+     * vierge. Une Réception déjà exploitée reste donc totalement
+     * préservée (Parti, départs anticipés, personnel, tris, etc.).
+     */
+    const initialisation =
+      initialiserDonneesNouvelEtablissementCampManagerV423_(
+        classeur
+      );
+
+    /*
+     * 0 bis. Paramètres -> listes techniques disponibles.
      */
     const listes =
       actualiserListesPersonnelDisponiblesCampManagerV423_(
