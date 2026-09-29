@@ -3589,6 +3589,42 @@ function traiterUneActionV4VersDrive_(
 
 
 /**
+ * Compatibilité avec les anciens appels du pont V4.
+ *
+ * Vérifie qu'un prénom fait partie d'une affectation de type :
+ * "Marine", "Marine/Alicia", etc.
+ *
+ * La logique de normalisation reste celle du moteur Ménage actuel.
+ */
+function personnelContientPrenomMenageMobile_(
+  personnel,
+  prenom
+) {
+  const cleRecherche =
+    normaliserCleRoleMenageDriveV3210_(
+      prenom
+    );
+
+  if (!cleRecherche) {
+    return false;
+  }
+
+  return decomposerPersonnelMenageDriveV3210_(
+    personnel
+  ).some(
+    function(nom) {
+      return (
+        normaliserCleRoleMenageDriveV3210_(
+          nom
+        ) ===
+          cleRecherche
+      );
+    }
+  );
+}
+
+
+/**
  * ============================================================
  * CONTRÔLE GOUVERNANTE V4 -> DRIVE — COMPATIBLE V3.2.10
  * ============================================================
