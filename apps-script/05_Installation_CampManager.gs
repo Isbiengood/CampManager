@@ -186,7 +186,7 @@ function installerCampManagerNouvelEtablissement() {
   if (!reprise) {
     const reponseNom =
       ui.prompt(
-        "🚀 Installation CampManager — 1/2",
+        "🚀 Installation CampManager 5.0.5 — 1/2",
         "Nom de votre établissement :\n\n" +
           "Exemples :\n" +
           "Camping du Lac\n" +
@@ -233,7 +233,7 @@ function installerCampManagerNouvelEtablissement() {
 
     const reponseCode =
       ui.prompt(
-        "🚀 Installation CampManager — 2/2",
+        "🚀 Installation CampManager 5.0.5 — 2/2",
         "Code d’installation à usage unique :\n\n" +
           "Ce code est fourni par l’administrateur de votre instance CampManager.\n" +
           "Il n’est utilisé qu’une seule fois pour créer votre établissement.",
