@@ -93,6 +93,34 @@ jobs:
             \( -name '*.gs' -o -name '*.js' -o -name '*.html' -o -name 'appsscript.json' \) \
             -printf '%f\n' | sort
 
+      - name: Verifier la syntaxe JavaScript
+        run: |
+          DEPLOY_DIR="$RUNNER_TEMP/campmanager-master"
+          CHECK_DIR="$RUNNER_TEMP/campmanager-syntax-check"
+          rm -rf "$CHECK_DIR"
+          mkdir -p "$CHECK_DIR"
+
+          erreur=0
+
+          for src in "$DEPLOY_DIR"/*.gs "$DEPLOY_DIR"/*.js; do
+            [ -e "$src" ] || continue
+
+            nom="$(basename "$src")"
+            cible="$CHECK_DIR/${nom%.*}.js"
+            cp "$src" "$cible"
+
+            echo "Verification syntaxe : $nom"
+
+            if ! node --check "$cible"; then
+              erreur=1
+            fi
+          done
+
+          if [ "$erreur" -ne 0 ]; then
+            echo "::error::Au moins un module Apps Script contient une erreur de syntaxe."
+            exit 1
+          fi
+
       - name: Verifier les fichiers qui seraient pousses
         working-directory: ${{ runner.temp }}/campmanager-master
         run: clasp status
