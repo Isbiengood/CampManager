@@ -745,4 +745,4 @@ function ouvrirTableauDeBord() {
   }
 
   classeur.setActiveSheet(feuille);
-}}
+}
