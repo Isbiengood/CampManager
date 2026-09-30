@@ -1,0 +1,99 @@
+name: Mettre a jour le MASTER Apps Script
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Action a effectuer"
+        required: true
+        default: "verification"
+        type: choice
+        options:
+          - verification
+          - deploiement
+
+permissions:
+  contents: read
+
+jobs:
+  master:
+    runs-on: ubuntu-latest
+
+    env:
+      MASTER_SCRIPT_ID: "1tLlIsjUxATHQkWVXwrzCaBcyUvxqeI1Uh5vb7oqVD9fK_GSJ_vatgQB1"
+
+    steps:
+      - name: Recuperer CampManager
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Installer clasp
+        run: npm install --global @google/clasp@3.4.1
+
+      - name: Charger les identifiants Google
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+        run: |
+          if [ -z "$CLASPRC_JSON" ]; then
+            echo "::error::Le secret GitHub CLASPRC_JSON n'est pas configure."
+            exit 1
+          fi
+
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+
+      - name: Cloner le MASTER actuel
+        run: |
+          DEPLOY_DIR="$RUNNER_TEMP/campmanager-master"
+          rm -rf "$DEPLOY_DIR"
+          mkdir -p "$DEPLOY_DIR"
+          cd "$DEPLOY_DIR"
+
+          clasp clone "$MASTER_SCRIPT_ID"
+
+          test -f appsscript.json || {
+            echo "::error::Le manifeste appsscript.json du MASTER n'a pas ete recupere."
+            exit 1
+          }
+
+      - name: Remplacer les modules geres par GitHub
+        run: |
+          DEPLOY_DIR="$RUNNER_TEMP/campmanager-master"
+
+          for src in "$GITHUB_WORKSPACE"/apps-script/*.gs; do
+            fichier="$(basename "$src")"
+
+            # La configuration reelle du MASTER reste locale.
+            # Le fichier .example du depot ne doit jamais l'ecraser.
+            if [ "$fichier" = "04_Configuration_CampManager.example.gs" ]; then
+              continue
+            fi
+
+            nom="${fichier%.gs}"
+
+            # clasp clone utilise normalement .js, tandis que le depot
+            # CampManager conserve les sources en .gs. On retire toute
+            # version du meme module avant de copier celle de GitHub.
+            rm -f "$DEPLOY_DIR/$nom.js" "$DEPLOY_DIR/$nom.gs"
+            cp "$src" "$DEPLOY_DIR/$nom.gs"
+          done
+
+          echo "Modules CampManager prepares :"
+          find "$DEPLOY_DIR" -maxdepth 1 -type f \
+            \( -name '*.gs' -o -name '*.js' -o -name '*.html' -o -name 'appsscript.json' \) \
+            -printf '%f\n' | sort
+
+      - name: Verifier les fichiers qui seraient pousses
+        working-directory: ${{ runner.temp }}/campmanager-master
+        run: clasp status
+
+      - name: Mettre a jour le MASTER
+        if: ${{ inputs.mode == 'deploiement' }}
+        working-directory: ${{ runner.temp }}/campmanager-master
+        run: |
+          clasp push --force
+          echo "MASTER Apps Script mis a jour depuis le commit $GITHUB_SHA"
