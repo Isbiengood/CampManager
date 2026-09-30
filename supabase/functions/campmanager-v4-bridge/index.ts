@@ -1,4 +1,4 @@
-const VERSION = "2.0.1-canonical-install-code";
+const VERSION = "2.0.2-bootstrap-diagnostics";
 
 const ALLOWED_RPCS = new Set([
   "obtenir_camping_multicamping_v4",
@@ -190,6 +190,29 @@ async function bootstrapInstallation(body: Record<string, unknown>) {
   ]);
 
   try {
+    const diagnostic = await callServerRpc(
+      "diagnostiquer_code_installation_campmanager_v4",
+      {
+        p_installation_code_hash: installationCodeHash,
+        p_code_etablissement: code,
+        p_nom_etablissement: name,
+      },
+    );
+
+    if (!diagnostic || diagnostic.found !== true) {
+      return jsonResponse(
+        {
+          ok: false,
+          message:
+            "Code d’installation non reconnu dans campmanager-opensource-test." +
+            (diagnostic && diagnostic.fingerprint
+              ? " Empreinte reçue : " + diagnostic.fingerprint + "."
+              : ""),
+        },
+        400,
+      );
+    }
+
     const created = await callServerRpc("bootstrap_installation_campmanager_v4", {
       p_installation_code_hash: installationCodeHash,
       p_bridge_token_hash: bridgeTokenHash,
