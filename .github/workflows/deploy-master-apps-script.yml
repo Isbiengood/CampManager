@@ -12,12 +12,6 @@ on:
           - verification
           - deploiement
 
-  push:
-    branches:
-      - main
-    paths:
-      - "apps-script/05_Installation_CampManager.gs"
-      - ".github/workflows/deploy-master-apps-script.yml"
 
 permissions:
   contents: read
@@ -158,7 +152,7 @@ jobs:
         run: clasp status
 
       - name: Mettre a jour le MASTER
-        if: ${{ github.event_name == 'push' || inputs.mode == 'deploiement' }}
+        if: ${{ inputs.mode == 'deploiement' }}
         working-directory: ${{ runner.temp }}/campmanager-master
         run: |
           clasp push --force
