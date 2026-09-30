@@ -70,7 +70,11 @@ jobs:
         run: |
           DEPLOY_DIR="$RUNNER_TEMP/campmanager-master"
           echo "=== Configuration publique du MASTER ==="
-          grep -n -E 'SUPABASE_URL|BRIDGE_FUNCTION_SLUG|PUBLIC_APP_URL' "$DEPLOY_DIR"/04_Configuration_CampManager*.gs || true
+          for cfg in "$DEPLOY_DIR"/04_Configuration_CampManager*; do
+            [ -e "$cfg" ] || continue
+            echo "--- $(basename "$cfg") ---"
+            grep -n -E 'SUPABASE_URL|BRIDGE_FUNCTION_SLUG|PUBLIC_APP_URL' "$cfg" || true
+          done
 
       - name: Remplacer les modules geres par GitHub
         run: |
