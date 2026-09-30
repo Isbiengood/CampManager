@@ -36,7 +36,7 @@
 // FRESH_BOOTSTRAP_DEPLOY_MARKER
 // MASTER_CONFIG_DIAGNOSTIC_TRIGGER
 const INSTALLATION_CAMPMANAGER_V422 = Object.freeze({
-  VERSION: "5.0.5-fresh-bootstrap",
+  VERSION: "5.0.6-auto-file-name",
   PROP_CAMPING_CODE: "CAMPMANAGER_V4_CAMPING_CODE",
   PROP_SPREADSHEET_ID: "CAMPMANAGER_V4_SPREADSHEET_ID",
   PROP_ETABLISSEMENT_NOM: "CAMPMANAGER_ETABLISSEMENT_NOM",
@@ -187,7 +187,7 @@ function installerCampManagerNouvelEtablissement() {
   if (!reprise) {
     const reponseNom =
       ui.prompt(
-        "🚀 Installation CampManager 5.0.5 — 1/2",
+        "🚀 Installation CampManager 5.0.6 — 1/2",
         "Nom de votre établissement :\n\n" +
           "Exemples :\n" +
           "Camping du Lac\n" +
@@ -234,7 +234,7 @@ function installerCampManagerNouvelEtablissement() {
 
     const reponseCode =
       ui.prompt(
-        "🚀 Installation CampManager 5.0.5 — 2/2",
+        "🚀 Installation CampManager 5.0.6 — 2/2",
         "Code d’installation à usage unique :\n\n" +
           "Ce code est fourni par l’administrateur de votre instance CampManager.\n" +
           "Il n’est utilisé qu’une seule fois pour créer votre établissement.",
@@ -382,6 +382,32 @@ function installerCampManagerNouvelEtablissement() {
   proprietes.deleteProperty(
     INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
   );
+
+  /*
+   * Une fois l'installation validée, la copie du MASTER prend
+   * automatiquement le nom de l'établissement saisi par l'utilisateur.
+   * Un éventuel échec de renommage ne doit jamais annuler l'installation.
+   */
+  try {
+    if (
+      nom &&
+      classeur.getName() !== nom
+    ) {
+      classeur.rename(
+        nom
+      );
+      SpreadsheetApp.flush();
+    }
+  } catch (erreur) {
+    console.warn(
+      "Renommage automatique du classeur impossible : " +
+        String(
+          erreur && erreur.message
+            ? erreur.message
+            : erreur
+        )
+    );
+  }
 
   const infrastructure =
     installerInfrastructureCampManager_();
