@@ -34,7 +34,7 @@
  */
 
 const INSTALLATION_CAMPMANAGER_V422 = Object.freeze({
-  VERSION: "5.0.4-copy-safe-bootstrap",
+  VERSION: "5.0.5-fresh-bootstrap",
   PROP_CAMPING_CODE: "CAMPMANAGER_V4_CAMPING_CODE",
   PROP_SPREADSHEET_ID: "CAMPMANAGER_V4_SPREADSHEET_ID",
   PROP_ETABLISSEMENT_NOM: "CAMPMANAGER_ETABLISSEMENT_NOM",
@@ -180,14 +180,7 @@ function installerCampManagerNouvelEtablissement() {
       ) || ""
     ).trim();
 
-  const reprise =
-    !!(
-      code &&
-      nom &&
-      timezone &&
-      jeton &&
-      idClasseurEnAttente === classeur.getId()
-    );
+  const reprise = false;
 
   if (!reprise) {
     const reponseNom =
