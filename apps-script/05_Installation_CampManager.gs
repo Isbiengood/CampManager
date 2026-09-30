@@ -33,6 +33,7 @@
  * ============================================================
  */
 
+// FRESH_BOOTSTRAP_DEPLOY_MARKER
 const INSTALLATION_CAMPMANAGER_V422 = Object.freeze({
   VERSION: "5.0.5-fresh-bootstrap",
   PROP_CAMPING_CODE: "CAMPMANAGER_V4_CAMPING_CODE",
