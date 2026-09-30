@@ -1,4 +1,4 @@
-const VERSION = "2.0.0-tenant-bound-bootstrap";
+const VERSION = "2.0.1-canonical-install-code";
 
 const ALLOWED_RPCS = new Set([
   "obtenir_camping_multicamping_v4",
@@ -44,6 +44,17 @@ async function sha256Hex(value: string) {
   return Array.from(new Uint8Array(digest))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
+}
+
+function canonicalizeInstallationCode(value: unknown) {
+  const compact = String(value || "").trim().replace(/\\s+/g, "");
+  const withPrefix = compact.match(/^cm-([0-9a-f]{36})$/i);
+  if (withPrefix) return `CM-${withPrefix[1].toLowerCase()}`;
+
+  const withoutPrefix = compact.match(/^([0-9a-f]{36})$/i);
+  if (withoutPrefix) return `CM-${withoutPrefix[1].toLowerCase()}`;
+
+  return compact;
 }
 
 function base64Url(bytes: Uint8Array) {
@@ -141,7 +152,7 @@ async function authenticateBridgeToken(token: string) {
 }
 
 async function bootstrapInstallation(body: Record<string, unknown>) {
-  const installationCode = String(body.installationCode || "").trim();
+  const installationCode = canonicalizeInstallationCode(body.installationCode);
   const establishment =
     body.establishment && typeof body.establishment === "object"
       ? (body.establishment as Record<string, unknown>)
