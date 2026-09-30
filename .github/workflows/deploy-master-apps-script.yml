@@ -64,6 +64,17 @@ jobs:
         run: |
           DEPLOY_DIR="$RUNNER_TEMP/campmanager-master"
 
+          # GitHub est la source de verite pour les modules CampManager.
+          # On supprime donc les anciens fichiers de code du MASTER afin
+          # d'eviter de conserver un module renomme ou obsolete.
+          #
+          # Seule la configuration propre au MASTER reste locale.
+          find "$DEPLOY_DIR" -maxdepth 1 -type f \
+            \( -name '*.js' -o -name '*.gs' \) \
+            ! -name '04_Configuration_CampManager*.js' \
+            ! -name '04_Configuration_CampManager*.gs' \
+            -delete
+
           for src in "$GITHUB_WORKSPACE"/apps-script/*.gs; do
             fichier="$(basename "$src")"
 
@@ -74,11 +85,6 @@ jobs:
             fi
 
             nom="${fichier%.gs}"
-
-            # clasp clone utilise normalement .js, tandis que le depot
-            # CampManager conserve les sources en .gs. On retire toute
-            # version du meme module avant de copier celle de GitHub.
-            rm -f "$DEPLOY_DIR/$nom.js" "$DEPLOY_DIR/$nom.gs"
             cp "$src" "$DEPLOY_DIR/$nom.gs"
           done
 
