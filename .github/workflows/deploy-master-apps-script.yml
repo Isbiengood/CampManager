@@ -17,6 +17,7 @@ on:
       - main
     paths:
       - "apps-script/05_Installation_CampManager.gs"
+      - ".github/workflows/deploy-master-apps-script.yml"
 
 permissions:
   contents: read
