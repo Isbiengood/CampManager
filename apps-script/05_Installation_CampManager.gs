@@ -34,12 +34,14 @@
  */
 
 const INSTALLATION_CAMPMANAGER_V422 = Object.freeze({
-  VERSION: "5.0.3-bootstrap",
+  VERSION: "5.0.4-copy-safe-bootstrap",
   PROP_CAMPING_CODE: "CAMPMANAGER_V4_CAMPING_CODE",
   PROP_SPREADSHEET_ID: "CAMPMANAGER_V4_SPREADSHEET_ID",
   PROP_ETABLISSEMENT_NOM: "CAMPMANAGER_ETABLISSEMENT_NOM",
   PROP_INSTALL_VERSION: "CAMPMANAGER_INSTALL_VERSION",
   PROP_INSTALL_DATE: "CAMPMANAGER_INSTALL_DATE",
+  PROP_PENDING_SPREADSHEET_ID:
+    "CAMPMANAGER_INSTALL_PENDING_SPREADSHEET_ID",
 
   HANDLER_SYNC:
     "synchroniserCampManagerV4BidirectionnelSecurise20260827",
@@ -87,6 +89,11 @@ function installerCampManagerNouvelEtablissement() {
 
   const proprietes =
     PropertiesService.getScriptProperties();
+
+  preparerContexteInstallationCopieCampManager_(
+    classeur,
+    proprietes
+  );
 
   const codeExistant =
     String(
@@ -166,12 +173,20 @@ function installerCampManagerNouvelEtablissement() {
       ) || ""
     ).trim();
 
+  const idClasseurEnAttente =
+    String(
+      proprietes.getProperty(
+        INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
+      ) || ""
+    ).trim();
+
   const reprise =
     !!(
       code &&
       nom &&
       timezone &&
-      jeton
+      jeton &&
+      idClasseurEnAttente === classeur.getId()
     );
 
   if (!reprise) {
@@ -311,7 +326,9 @@ function installerCampManagerNouvelEtablissement() {
         CAMPMANAGER_INSTALL_PENDING_NAME:
           nom,
         CAMPMANAGER_INSTALL_PENDING_TIMEZONE:
-          timezone
+          timezone,
+        CAMPMANAGER_INSTALL_PENDING_SPREADSHEET_ID:
+          classeur.getId()
       },
       false
     );
@@ -367,6 +384,9 @@ function installerCampManagerNouvelEtablissement() {
   proprietes.deleteProperty(
     CAMPMANAGER_BACKEND.PROP_PENDING_TIMEZONE
   );
+  proprietes.deleteProperty(
+    INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
+  );
 
   const infrastructure =
     installerInfrastructureCampManager_();
@@ -401,6 +421,126 @@ function installerCampManagerNouvelEtablissement() {
     nettoyage: nettoyage,
     infrastructure: infrastructure,
     diagnostic: diagnostic
+  };
+}
+
+
+/**
+ * Nettoie automatiquement les propriétés héritées lorsqu'un utilisateur
+ * travaille dans une COPIE du MASTER.
+ *
+ * Les propriétés du projet Apps Script peuvent être recopiées avec le
+ * classeur. Un ancien jeton ou un état "pending" ne doit jamais être
+ * réutilisé par une nouvelle copie.
+ */
+function preparerContexteInstallationCopieCampManager_(
+  classeur,
+  proprietes
+) {
+  classeur =
+    classeur ||
+    SpreadsheetApp.getActiveSpreadsheet();
+
+  proprietes =
+    proprietes ||
+    PropertiesService.getScriptProperties();
+
+  const idActuel =
+    String(
+      classeur && classeur.getId
+        ? classeur.getId()
+        : ""
+    ).trim();
+
+  if (!idActuel) {
+    throw new Error(
+      "Impossible d’identifier le Google Sheet courant."
+    );
+  }
+
+  const codeInstalle =
+    String(
+      proprietes.getProperty(
+        INSTALLATION_CAMPMANAGER_V422.PROP_CAMPING_CODE
+      ) || ""
+    ).trim();
+
+  const idInstalle =
+    String(
+      proprietes.getProperty(
+        INSTALLATION_CAMPMANAGER_V422.PROP_SPREADSHEET_ID
+      ) || ""
+    ).trim();
+
+  const idPending =
+    String(
+      proprietes.getProperty(
+        INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
+      ) || ""
+    ).trim();
+
+  /*
+   * Cas 1 : copie d'un classeur déjà configuré.
+   * Le code/jeton de l'original ne doit jamais suivre la copie.
+   */
+  if (
+    codeInstalle &&
+    idInstalle &&
+    idInstalle !== idActuel
+  ) {
+    [
+      INSTALLATION_CAMPMANAGER_V422.PROP_CAMPING_CODE,
+      INSTALLATION_CAMPMANAGER_V422.PROP_SPREADSHEET_ID,
+      INSTALLATION_CAMPMANAGER_V422.PROP_ETABLISSEMENT_NOM,
+      INSTALLATION_CAMPMANAGER_V422.PROP_INSTALL_VERSION,
+      INSTALLATION_CAMPMANAGER_V422.PROP_INSTALL_DATE,
+      CAMPMANAGER_BACKEND.PROP_BRIDGE_TOKEN,
+      CAMPMANAGER_BACKEND.PROP_PENDING_CODE,
+      CAMPMANAGER_BACKEND.PROP_PENDING_NAME,
+      CAMPMANAGER_BACKEND.PROP_PENDING_TIMEZONE,
+      INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
+    ].forEach(
+      function(cle) {
+        proprietes.deleteProperty(cle);
+      }
+    );
+
+    return {
+      copieDetectee: true,
+      ancienContexteSupprime: true
+    };
+  }
+
+  /*
+   * Cas 2 : classeur non configuré.
+   * On ne reprend un bootstrap interrompu que si le pending a été créé
+   * PAR CE MÊME Google Sheet. Un pending ancien, vide ou hérité est effacé.
+   */
+  if (
+    !codeInstalle &&
+    idPending !== idActuel
+  ) {
+    [
+      CAMPMANAGER_BACKEND.PROP_BRIDGE_TOKEN,
+      CAMPMANAGER_BACKEND.PROP_PENDING_CODE,
+      CAMPMANAGER_BACKEND.PROP_PENDING_NAME,
+      CAMPMANAGER_BACKEND.PROP_PENDING_TIMEZONE,
+      INSTALLATION_CAMPMANAGER_V422.PROP_PENDING_SPREADSHEET_ID
+    ].forEach(
+      function(cle) {
+        proprietes.deleteProperty(cle);
+      }
+    );
+
+    return {
+      copieDetectee: true,
+      ancienContexteSupprime: true
+    };
+  }
+
+  return {
+    copieDetectee: false,
+    ancienContexteSupprime: false
   };
 }
 
