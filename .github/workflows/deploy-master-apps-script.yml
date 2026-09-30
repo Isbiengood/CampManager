@@ -73,7 +73,7 @@ jobs:
           for cfg in "$DEPLOY_DIR"/04_Configuration_CampManager*; do
             [ -e "$cfg" ] || continue
             echo "--- $(basename "$cfg") ---"
-            grep -n -E 'SUPABASE_URL|BRIDGE_FUNCTION_SLUG|PUBLIC_APP_URL' "$cfg" || true
+            grep -n -A1 -E 'SUPABASE_URL|BRIDGE_FUNCTION_SLUG|PUBLIC_APP_URL' "$cfg" || true
           done
 
       - name: Remplacer les modules geres par GitHub
