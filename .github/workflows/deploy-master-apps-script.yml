@@ -12,6 +12,12 @@ on:
           - verification
           - deploiement
 
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/deploy-master-once.trigger"
+
 permissions:
   contents: read
 
@@ -126,7 +132,7 @@ jobs:
         run: clasp status
 
       - name: Mettre a jour le MASTER
-        if: ${{ inputs.mode == 'deploiement' }}
+        if: ${{ github.event_name == 'push' || inputs.mode == 'deploiement' }}
         working-directory: ${{ runner.temp }}/campmanager-master
         run: |
           clasp push --force
