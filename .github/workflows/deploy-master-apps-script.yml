@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/deploy-master-once.trigger"
+      - "apps-script/05_Installation_CampManager.gs"
 
 permissions:
   contents: read
