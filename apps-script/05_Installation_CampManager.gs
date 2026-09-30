@@ -2066,3 +2066,4 @@ function messageErreurInstallationCampManager_(
       : erreur
   );
 }
+// config diagnostic refresh
