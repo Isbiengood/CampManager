@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * FEUILLE MÉNAGE — VERSION V3.3.2a OPEN SOURCE — DOUBLE VALIDATION DRIVE
+ * FEUILLE MÉNAGE — VERSION V3.3.3 OPEN SOURCE — LIBELLÉ À CONTRÔLER DRIVE
  * ============================================================
  *
  * Colonnes visibles :
@@ -25,6 +25,9 @@
  * Lorsqu'elles sont nécessaires, elles sont lues
  * directement dans la feuille Réception.
  */
+
+
+const ETAT_MENAGE_DRIVE_A_CONTROLER = "À contrôler";
 
 
 /* ============================================================
@@ -1028,7 +1031,9 @@ function ecrireDonneesMenage_(
           ligne.personnel,
           ligne.priorite,
           ligne.acces,
-          ligne.etatMenage,
+          afficherEtatMenageDrive_(
+            ligne.etatMenage
+          ),
           ligne.etatReception
         ];
       }
@@ -1091,7 +1096,7 @@ function synchroniserEtatMenageVersReception(
   }
 
   const nouvelEtatMenage =
-    normaliserValeurMenage(
+    normaliserEtatMenageDrive_(
       cellule.getValue()
     );
 
@@ -1649,8 +1654,8 @@ function appliquerListeEtatsMenage(
    * Quel que soit le rôle de la personne affectée, y compris
    * lorsqu'elle possède à la fois les rôles Ménage + Gouvernante :
    *
-   *   E État ménage : À faire / À vérifier
-   *   H État contrôle : À vérifier / Prêt
+   *   E État ménage : À faire / À contrôler
+   *   H État contrôle : À contrôler / Prêt
    *
    * Une personne double rôle doit donc valider deux fois :
    * d'abord la fin du ménage, puis le contrôle.
@@ -1688,13 +1693,13 @@ function appliquerListeEtatsMenage(
       .requireValueInList(
         [
           ETAT_MENAGE.A_FAIRE,
-          ETAT_MENAGE.A_VERIFIER
+          ETAT_MENAGE_DRIVE_A_CONTROLER
         ],
         true
       )
       .setAllowInvalid(false)
       .setHelpText(
-        "Ménage : À faire ou À vérifier."
+        "Ménage : À faire ou À contrôler."
       )
       .build();
 
@@ -1726,9 +1731,9 @@ function appliquerListeEtatsMenage(
       ).trim();
 
     const etat =
-      String(
-        etats[index][0] || ""
-      ).trim();
+      normaliserEtatMenageDrive_(
+        etats[index][0]
+      );
 
     /*
      * Le recontrôle est imposé automatiquement par le programme.
@@ -1746,7 +1751,7 @@ function appliquerListeEtatsMenage(
     }
 
     /*
-     * Une ligne déjà À vérifier reste dans le circuit normal
+     * Une ligne déjà À contrôler reste dans le circuit normal
      * de contrôle gouvernante, même si la personne affectée
      * possède aujourd'hui le double rôle.
      */
@@ -2514,7 +2519,7 @@ function lireDonneesMenageExistantes(
           ),
 
         etatMenage:
-          normaliserValeurMenage(
+          normaliserEtatMenageDrive_(
             ligne[
               indexColonnes.etatMenage
             ]
@@ -2933,6 +2938,40 @@ function normaliserEtatReceptionMenage_(
   }
 
   return texteOriginal;
+}
+
+
+function normaliserEtatMenageDrive_(
+  valeur
+) {
+  const texte =
+    String(
+      valeur || ""
+    ).trim();
+
+  if (
+    texte ===
+      ETAT_MENAGE_DRIVE_A_CONTROLER
+  ) {
+    return ETAT_MENAGE.A_VERIFIER;
+  }
+
+  return texte;
+}
+
+
+function afficherEtatMenageDrive_(
+  valeur
+) {
+  const etat =
+    normaliserEtatMenageDrive_(
+      valeur
+    );
+
+  return etat ===
+    ETAT_MENAGE.A_VERIFIER
+    ? ETAT_MENAGE_DRIVE_A_CONTROLER
+    : etat;
 }
 
 
