@@ -1,6 +1,17 @@
 name: Mettre a jour le MASTER Apps Script
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps-script/31_Menage.gs"
+      - "apps-script/75_MiseEnForme.gs"
+      - "apps-script/90_OnEdit.gs"
+      - "apps-script/91_Menage_Secours_Drive.gs"
+      - "apps-script/94_Controle_Gouvernante_Manuel_V4.gs"
+      - "apps-script/96_Supabase_V4_Synchronisation.gs"
+      - ".github/workflows/deploy-master-apps-script.yml"
 
   workflow_dispatch:
     inputs:
@@ -153,7 +164,7 @@ jobs:
         run: clasp status
 
       - name: Mettre a jour le MASTER
-        if: ${{ inputs.mode == 'deploiement' }}
+        if: ${{ github.event_name == 'push' || inputs.mode == 'deploiement' }}
         working-directory: ${{ runner.temp }}/campmanager-master
         run: |
           clasp push --force
