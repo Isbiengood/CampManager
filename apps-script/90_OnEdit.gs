@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER — GESTION DES MODIFICATIONS MANUELLES
- * VERSION V2.35 OPEN SOURCE — HISTORIQUE DRIVE + PRIORITÉ ATTENTE PROTÉGÉE + H DÉLÉGUÉE AU 94
+ * VERSION V2.36 OPEN SOURCE — DOUBLE VALIDATION DRIVE OBLIGATOIRE
  * ============================================================
  *
  * V2.35
@@ -2204,15 +2204,14 @@ function autoriserModificationEtatMenageDriveV329_(
     return true;
   }
 
-  if (
-    typeof estDoubleRolePersonnelMenageDriveV329_ ===
-      "function" &&
-    estDoubleRolePersonnelMenageDriveV329_(
-      personnel
-    )
-  ) {
-    return true;
-  }
+  /*
+   * Même si une personne possède les rôles Ménage + Gouvernante,
+   * le Drive conserve deux validations distinctes :
+   *   1. colonne E : À faire -> À vérifier ;
+   *   2. colonne H : contrôle -> Prêt.
+   *
+   * Aucun raccourci double rôle n'est autorisé ici.
+   */
 
   const nouvelleValeur =
     String(
