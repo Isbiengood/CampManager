@@ -28,7 +28,7 @@ const MENAGE_SECOURS_V3210 = {
   COLONNE_CHECK: 7,
   COLONNE_ETAT: 8,
   NOMBRE_COLONNES: 8,
-  ETAT_A_VERIFIER: "À vérifier",
+  ETAT_A_VERIFIER: "À contrôler",
   ETAT_A_RECONTROLER: "À recontrôler",
   ETAT_PRET: "Prêt"
 };
@@ -228,11 +228,20 @@ function appliquerSecoursDriveMenageV3210_(
         COLONNES_MENAGE.LOGEMENT;
 
       const etatMenage =
-        String(
-          ligne[
-            indexEtatMenage
-          ] || ""
-        ).trim();
+        (
+          typeof normaliserEtatMenageDrive_ ===
+            "function"
+        )
+          ? normaliserEtatMenageDrive_(
+              ligne[
+                indexEtatMenage
+              ]
+            )
+          : String(
+              ligne[
+                indexEtatMenage
+              ] || ""
+            ).trim();
 
       const gouvernante =
         String(
@@ -340,8 +349,8 @@ function appliquerSecoursDriveMenageV3210_(
    * Le Drive impose désormais deux validations distinctes,
    * y compris pour une personne qui possède les deux rôles :
    *
-   *   1. E : À faire -> À vérifier ;
-   *   2. H : À vérifier / À recontrôler -> Prêt.
+   *   1. E : À faire -> À contrôler ;
+   *   2. H : À contrôler / À recontrôler -> Prêt.
    *
    * "Prêt" n'est donc proposé que lorsque le logement est
    * réellement en attente de contrôle.
@@ -353,11 +362,20 @@ function appliquerSecoursDriveMenageV3210_(
         COLONNES_MENAGE.LOGEMENT;
 
       const etatMenage =
-        String(
-          ligne[
-            indexEtatMenage
-          ] || ""
-        ).trim();
+        (
+          typeof normaliserEtatMenageDrive_ ===
+            "function"
+        )
+          ? normaliserEtatMenageDrive_(
+              ligne[
+                indexEtatMenage
+              ]
+            )
+          : String(
+              ligne[
+                indexEtatMenage
+              ] || ""
+            ).trim();
 
       const celluleEtat =
         feuilleMenage.getRange(
@@ -805,14 +823,26 @@ function gererEditionSecoursDriveMenageV3210(
       );
 
     const etatMenage =
-      String(
-        feuilleMenage
-          .getRange(
-            ligneMenage,
-            COLONNES_MENAGE.ETAT_MENAGE
+      (
+        typeof normaliserEtatMenageDrive_ ===
+          "function"
+      )
+        ? normaliserEtatMenageDrive_(
+            feuilleMenage
+              .getRange(
+                ligneMenage,
+                COLONNES_MENAGE.ETAT_MENAGE
+              )
+              .getDisplayValue()
           )
-          .getDisplayValue() || ""
-      ).trim();
+        : String(
+            feuilleMenage
+              .getRange(
+                ligneMenage,
+                COLONNES_MENAGE.ETAT_MENAGE
+              )
+              .getDisplayValue() || ""
+          ).trim();
 
     const celluleEtatSecours =
       feuilleMenage.getRange(
@@ -869,7 +899,7 @@ function gererEditionSecoursDriveMenageV3210(
     ).trim();
 
   /*
-   * À vérifier / À recontrôler sont des états d'attente.
+   * À contrôler / À recontrôler sont des états d'attente.
    * H doit refléter exactement l'état réel de E.
    *
    * On ne permet donc pas de transformer manuellement
@@ -882,14 +912,26 @@ function gererEditionSecoursDriveMenageV3210(
       MENAGE_SECOURS_V3210.ETAT_A_RECONTROLER
   ) {
     const etatMenageActuel =
-      String(
-        feuilleMenage
-          .getRange(
-            ligneMenage,
-            COLONNES_MENAGE.ETAT_MENAGE
+      (
+        typeof normaliserEtatMenageDrive_ ===
+          "function"
+      )
+        ? normaliserEtatMenageDrive_(
+            feuilleMenage
+              .getRange(
+                ligneMenage,
+                COLONNES_MENAGE.ETAT_MENAGE
+              )
+              .getDisplayValue()
           )
-          .getDisplayValue() || ""
-      ).trim();
+        : String(
+            feuilleMenage
+              .getRange(
+                ligneMenage,
+                COLONNES_MENAGE.ETAT_MENAGE
+              )
+              .getDisplayValue() || ""
+          ).trim();
 
     const valeurAttendue =
       etatMenageActuel ===
