@@ -2395,7 +2395,7 @@ function lireTachesMenageSupabaseV4_(
               []
             );
 
-      const etatMenage =
+      const etatMenageBrut =
         nettoyerTexteSupabaseV4_(
           ligne[
             CAMPMANAGER_V4_DRIVE_SYNC_20260820
@@ -2406,6 +2406,16 @@ function lireTachesMenageSupabaseV4_(
           ]
         ) ||
         "À faire";
+
+      const etatMenage =
+        (
+          typeof normaliserEtatMenageDrive_ ===
+            "function"
+        )
+          ? normaliserEtatMenageDrive_(
+              etatMenageBrut
+            )
+          : etatMenageBrut;
 
       resultat.push({
         logement:
@@ -3150,9 +3160,16 @@ function avancerEtatMenageMobile(
       );
 
     const etatActuel =
-      normaliserValeurMenage(
-        celluleEtat.getValue()
-      );
+      (
+        typeof normaliserEtatMenageDrive_ ===
+          "function"
+      )
+        ? normaliserEtatMenageDrive_(
+            celluleEtat.getValue()
+          )
+        : normaliserValeurMenage(
+            celluleEtat.getValue()
+          );
 
     if (
       etatActuel !==
@@ -3716,9 +3733,16 @@ function appliquerControleGouvernanteV4DansDrive_(
     );
 
   const etatActuel =
-    normaliserValeurMenage(
-      celluleEtatMenage.getValue()
-    );
+    (
+      typeof normaliserEtatMenageDrive_ ===
+        "function"
+    )
+      ? normaliserEtatMenageDrive_(
+          celluleEtatMenage.getValue()
+        )
+      : normaliserValeurMenage(
+          celluleEtatMenage.getValue()
+        );
 
   if (
     etatActuel !==
