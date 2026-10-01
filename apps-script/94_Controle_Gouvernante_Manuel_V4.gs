@@ -306,14 +306,26 @@ function traiterControleGouvernanteManuelV4_20260907(
     ).trim();
 
   const ancienEtat =
-    String(
-      feuille
-        .getRange(
-          ligne,
-          colEtat
+    (
+      typeof normaliserEtatMenageDrive_ ===
+        "function"
+    )
+      ? normaliserEtatMenageDrive_(
+          feuille
+            .getRange(
+              ligne,
+              colEtat
+            )
+            .getDisplayValue()
         )
-        .getDisplayValue() || ""
-    ).trim();
+      : String(
+          feuille
+            .getRange(
+              ligne,
+              colEtat
+            )
+            .getDisplayValue() || ""
+        ).trim();
 
   enregistrerTraceControleGouvernanteV4_20260907_({
     etape: "donnees_lues",
