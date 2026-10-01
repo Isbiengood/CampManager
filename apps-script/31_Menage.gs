@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * FEUILLE MÉNAGE — VERSION V3.3.1 OPEN SOURCE — SECOURS DRIVE + RÔLES
+ * FEUILLE MÉNAGE — VERSION V3.3.2 OPEN SOURCE — DOUBLE VALIDATION DRIVE
  * ============================================================
  *
  * Colonnes visibles :
@@ -1644,22 +1644,19 @@ function appliquerListeEtatsMenage(
   }
 
   /*
-   * V3.2.10 — Listes de la colonne E selon le rôle.
+   * V3.3.2 — Deux validations Drive obligatoires.
    *
-   * Femme de chambre seule :
-   *   À faire / À vérifier
+   * Quel que soit le rôle de la personne affectée, y compris
+   * lorsqu'elle possède à la fois les rôles Ménage + Gouvernante :
    *
-   * Toute l'équipe affectée est double rôle
-   * Femme de chambre + Gouvernante :
-   *   À faire / Prêt
+   *   E État ménage : À faire / À vérifier
+   *   H État contrôle : À vérifier / Prêt
    *
-   * Recontrôle déclenché automatiquement par Réception
-   * (notamment règle de l'écart de jours) :
-   *   E reste sur À recontrôler.
-   *   La gouvernante valide ensuite Prêt dans la colonne H.
+   * Une personne double rôle doit donc valider deux fois :
+   * d'abord la fin du ménage, puis le contrôle.
    *
-   * Ainsi, À recontrôler n'est jamais proposé comme un choix
-   * manuel pour déclencher un recontrôle.
+   * Recontrôle déclenché automatiquement par Réception :
+   * E reste sur À recontrôler et la validation finale se fait en H.
    */
 
   const personnels =
@@ -1698,22 +1695,6 @@ function appliquerListeEtatsMenage(
       .setAllowInvalid(false)
       .setHelpText(
         "Ménage : À faire ou À vérifier."
-      )
-      .build();
-
-  const validationDoubleRole =
-    SpreadsheetApp
-      .newDataValidation()
-      .requireValueInList(
-        [
-          ETAT_MENAGE.A_FAIRE,
-          ETAT_MENAGE.PRET
-        ],
-        true
-      )
-      .setAllowInvalid(false)
-      .setHelpText(
-        "Double rôle : À faire ou Prêt."
       )
       .build();
 
@@ -1780,16 +1761,12 @@ function appliquerListeEtatsMenage(
       continue;
     }
 
-    const doubleRole =
-      equipeEntierementDoubleRoleMenageDriveV3210_(
-        personnel,
-        carteRoles
-      );
-
+    /*
+     * Même règle pour tous : la colonne E ne termine jamais
+     * directement le contrôle, même en double rôle.
+     */
     validations.push([
-      doubleRole
-        ? validationDoubleRole
-        : validationFemmeDeChambre
+      validationFemmeDeChambre
     ]);
   }
 
