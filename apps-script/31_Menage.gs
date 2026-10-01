@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * FEUILLE MÉNAGE — VERSION V3.3.2 OPEN SOURCE — DOUBLE VALIDATION DRIVE
+ * FEUILLE MÉNAGE — VERSION V3.3.2a OPEN SOURCE — DOUBLE VALIDATION DRIVE
  * ============================================================
  *
  * Colonnes visibles :
