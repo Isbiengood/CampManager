@@ -2221,6 +2221,16 @@ function autoriserModificationEtatMenageDriveV329_(
         : cellule.getDisplayValue()
     ).trim();
 
+  const nouvelleValeurMetier =
+    (
+      typeof normaliserEtatMenageDrive_ ===
+        "function"
+    )
+      ? normaliserEtatMenageDrive_(
+          nouvelleValeur
+        )
+      : nouvelleValeur;
+
   const autorises = [
     ETAT_MENAGE.A_FAIRE,
     ETAT_MENAGE.A_VERIFIER
@@ -2228,7 +2238,7 @@ function autoriserModificationEtatMenageDriveV329_(
 
   if (
     autorises.indexOf(
-      nouvelleValeur
+      nouvelleValeurMetier
     ) !== -1
   ) {
     return true;
@@ -2253,7 +2263,7 @@ function autoriserModificationEtatMenageDriveV329_(
   SpreadsheetApp
     .getActiveSpreadsheet()
     .toast(
-      "Personnel ménage : seuls « À faire » et « À vérifier » sont autorisés. " +
+      "Personnel ménage : seuls « À faire » et « À contrôler » sont autorisés. " +
         "Le contrôle se fait dans la colonne Contrôle.",
       "⛔ Action non autorisée",
       7
