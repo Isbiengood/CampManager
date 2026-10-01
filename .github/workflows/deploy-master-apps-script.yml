@@ -1,6 +1,12 @@
 name: Mettre a jour le MASTER Apps Script
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps-script/31_Menage.gs"
+      - ".github/workflows/deploy-master-apps-script.yml"
 
   workflow_dispatch:
     inputs:
