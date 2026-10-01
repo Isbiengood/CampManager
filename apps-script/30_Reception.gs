@@ -2,7 +2,7 @@
  * =========================================================
  * CAMPMANAGER
  * MISE À JOUR DE LA FEUILLE RÉCEPTION
- * VERSION 2.20 OPEN SOURCE — 25/09/2026
+ * VERSION 2.21 OPEN SOURCE — DATES CALENDAIRES SÉCURISÉES
  * =========================================================
  *
  * Reconstruction sécurisée par numéro de logement :
@@ -618,7 +618,9 @@ function determinerOccupationReception(
   }
 
   const dateDuJour =
-    aujourdHui.getTime();
+    cleJourReception_(
+      aujourdHui
+    );
 
   const reservationsUtiles =
     reservations.filter(
@@ -626,7 +628,9 @@ function determinerOccupationReception(
         return (
           reservation.etatReservation ===
             ETAT_RESERVATION.ACTIVE &&
-          reservation.dateDepart.getTime() >=
+          cleJourReception_(
+            reservation.dateDepart
+          ) >=
             dateDuJour
         );
       }
@@ -636,9 +640,13 @@ function determinerOccupationReception(
     reservationsUtiles.find(
       function(reservation) {
         return (
-          reservation.dateArrivee.getTime() <
+          cleJourReception_(
+            reservation.dateArrivee
+          ) <
             dateDuJour &&
-          reservation.dateDepart.getTime() >=
+          cleJourReception_(
+            reservation.dateDepart
+          ) >=
             dateDuJour
         );
       }
@@ -648,7 +656,9 @@ function determinerOccupationReception(
     reservationsUtiles.find(
       function(reservation) {
         const arriveeAujourdHuiOuApres =
-          reservation.dateArrivee.getTime() >=
+          cleJourReception_(
+          reservation.dateArrivee
+        ) >=
           dateDuJour;
 
         const numeroDifferent =
@@ -1541,7 +1551,9 @@ function determinerSituationReservationsReception_(
   aujourdHui
 ) {
   const dateDuJour =
-    aujourdHui.getTime();
+    cleJourReception_(
+      aujourdHui
+    );
 
   /*
    * Réservations actives utilisées pour l'affichage courant.
@@ -1570,9 +1582,13 @@ function determinerSituationReservationsReception_(
     utiles.find(
       function(reservation) {
         return (
-          reservation.dateArrivee.getTime() <
+          cleJourReception_(
+            reservation.dateArrivee
+          ) <
             dateDuJour &&
-          reservation.dateDepart.getTime() >=
+          cleJourReception_(
+            reservation.dateDepart
+          ) >=
             dateDuJour
         );
       }
@@ -1582,7 +1598,9 @@ function determinerSituationReservationsReception_(
     utiles.find(
       function(reservation) {
         return (
-          reservation.dateArrivee.getTime() ===
+          cleJourReception_(
+          reservation.dateArrivee
+        ) ===
           dateDuJour &&
           (
             !clientPresent ||
@@ -1601,7 +1619,9 @@ function determinerSituationReservationsReception_(
     utiles.find(
       function(reservation) {
         return (
-          reservation.dateArrivee.getTime() >
+          cleJourReception_(
+          reservation.dateArrivee
+        ) >
           dateDuJour
         );
       }
@@ -1955,6 +1975,36 @@ function appliquerMiseEnFormeReception(
 /**
  * Compare deux dates sans tenir compte de l'heure.
  */
+function cleJourReception_(
+  valeur
+) {
+  const date =
+    convertirEnDateReception(
+      valeur
+    );
+
+  if (!date) {
+    return null;
+  }
+
+  const classeur =
+    SpreadsheetApp.getActiveSpreadsheet();
+
+  const fuseau =
+    classeur
+      ? classeur.getSpreadsheetTimeZone()
+      : Session.getScriptTimeZone();
+
+  return Number(
+    Utilities.formatDate(
+      date,
+      fuseau,
+      "yyyyMMdd"
+    )
+  );
+}
+
+
 function sontMemeJourReception_(
   dateA,
   dateB
