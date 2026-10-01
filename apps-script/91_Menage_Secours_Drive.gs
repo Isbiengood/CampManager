@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMPMANAGER
- * MÉNAGE — SECOURS GOOGLE SHEETS V3.2.12 OPEN SOURCE
+ * MÉNAGE — SECOURS GOOGLE SHEETS V3.2.13 OPEN SOURCE
  * ============================================================
  *
  * Objectif :
@@ -335,33 +335,71 @@ function appliquerSecoursDriveMenageV3210_(
   }
 
   /*
-   * Liste État gouvernante :
-   * - À vérifier
-   * - À recontrôler
-   * - Prêt
+   * Validation contextuelle de la colonne H.
    *
-   * À recontrôler est normalement positionné automatiquement
-   * par la règle métier de Réception.
+   * Le Drive impose désormais deux validations distinctes,
+   * y compris pour une personne qui possède les deux rôles :
+   *
+   *   1. E : À faire -> À vérifier ;
+   *   2. H : À vérifier / À recontrôler -> Prêt.
+   *
+   * "Prêt" n'est donc proposé que lorsque le logement est
+   * réellement en attente de contrôle.
    */
-  const validationEtat =
-    SpreadsheetApp
-      .newDataValidation()
-      .requireValueInList(
-        [
-          MENAGE_SECOURS_V3210.ETAT_A_VERIFIER,
-          MENAGE_SECOURS_V3210.ETAT_A_RECONTROLER,
-          MENAGE_SECOURS_V3210.ETAT_PRET
-        ],
-        true
-      )
-      .setAllowInvalid(false)
-      .setHelpText(
-        "Contrôle gouvernante : À vérifier, À recontrôler ou Prêt."
-      )
-      .build();
+  donneesMenage.forEach(
+    function(ligne, index) {
+      const indexEtatMenage =
+        COLONNES_MENAGE.ETAT_MENAGE -
+        COLONNES_MENAGE.LOGEMENT;
 
-  plageEtat.setDataValidation(
-    validationEtat
+      const etatMenage =
+        String(
+          ligne[
+            indexEtatMenage
+          ] || ""
+        ).trim();
+
+      const celluleEtat =
+        feuilleMenage.getRange(
+          LIGNES.DEBUT + index,
+          MENAGE_SECOURS_V3210.COLONNE_ETAT
+        );
+
+      celluleEtat.clearDataValidations();
+
+      if (
+        etatMenage ===
+          ETAT_MENAGE.A_VERIFIER ||
+        etatMenage ===
+          ETAT_MENAGE.A_RECONTROLER
+      ) {
+        const etatAttente =
+          etatMenage ===
+            ETAT_MENAGE.A_RECONTROLER
+            ? MENAGE_SECOURS_V3210.ETAT_A_RECONTROLER
+            : MENAGE_SECOURS_V3210.ETAT_A_VERIFIER;
+
+        const validationEtat =
+          SpreadsheetApp
+            .newDataValidation()
+            .requireValueInList(
+              [
+                etatAttente,
+                MENAGE_SECOURS_V3210.ETAT_PRET
+              ],
+              true
+            )
+            .setAllowInvalid(false)
+            .setHelpText(
+              "Validez le contrôle en choisissant « Prêt »."
+            )
+            .build();
+
+        celluleEtat.setDataValidation(
+          validationEtat
+        );
+      }
+    }
   );
 
   /*
