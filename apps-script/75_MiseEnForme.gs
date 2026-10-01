@@ -508,9 +508,16 @@ function obtenirCouleurEtatReception(
   etat
 ) {
   const valeur =
-    String(
-      etat || ""
-    ).trim();
+    (
+      typeof normaliserEtatMenageDrive_ ===
+        "function"
+    )
+      ? normaliserEtatMenageDrive_(
+          etat
+        )
+      : String(
+          etat || ""
+        ).trim();
 
   switch (valeur) {
     /*
