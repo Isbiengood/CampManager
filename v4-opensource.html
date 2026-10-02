@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#17365d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CampManager V4">
+  <title>CampManager V4</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --fond: #f3f5f8;
+      --carte: #ffffff;
+      --texte: #17202a;
+      --secondaire: #66717d;
+      --bleu: #17365d;
+      --bordure: #dfe4ea;
+      --vert: #257b36;
+      --vert-fond: #eaf6ec;
+      --rouge: #b3261e;
+      --rouge-fond: #fff1f0;
+      --orange: #9a5700;
+      --orange-fond: #fff4df;
+      --violet: #674ea7;
+      --violet-fond: #f1eafa;
+      --ombre: 0 8px 25px rgba(23,54,93,.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--fond);
+      color: var(--texte);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    body.sombre {
+      color-scheme: dark;
+      --fond: #12161b;
+      --carte: #1b222a;
+      --texte: #f5f7f9;
+      --secondaire: #b8c0c8;
+      --bleu: #9fc4f3;
+      --bordure: #34404c;
+      --vert: #73c982;
+      --vert-fond: #193321;
+      --rouge: #ff9d97;
+      --rouge-fond: #3a1e1c;
+      --orange: #ffc469;
+      --orange-fond: #3b2b12;
+      --violet: #c5a9ff;
+      --violet-fond: #2b2340;
+      --ombre: 0 8px 25px rgba(0,0,0,.28);
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .55; cursor: default; }
+    .cache { display: none !important; }
+
+    .entete {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: max(10px, env(safe-area-inset-top)) 14px 10px;
+      background: var(--bleu);
+      color: white;
+      box-shadow: 0 3px 14px rgba(0,0,0,.16);
+    }
+
+    body.sombre .entete { color: #101820; }
+
+    .ligne-entete {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .titre-app {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .sous-titre {
+      margin-top: 3px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: .88;
+    }
+
+    .actions-entete { display: flex; gap: 7px; }
+
+    .bouton-icone {
+      width: 43px;
+      height: 43px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 13px;
+      background: rgba(255,255,255,.13);
+      color: inherit;
+      font-size: 20px;
+    }
+
+    .bandeau-test {
+      padding: 9px 14px;
+      background: #dfeeff;
+      color: #17365d;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .contenu {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 14px 12px calc(30px + env(safe-area-inset-bottom));
+    }
+
+    .barre-etat {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--bordure);
+      border-radius: 14px;
+      background: var(--carte);
+      box-shadow: var(--ombre);
+    }
+
+    .utilisateur { font-weight: 900; }
+
+    .etat-technique {
+      margin-top: 3px;
+      color: var(--secondaire);
+      font-size: 12px;
+    }
+
+    .badge-vitesse {
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: var(--vert-fond);
+      color: var(--vert);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .titre-section {
+      margin: 20px 2px 9px;
+      font-size: 17px;
+      font-weight: 950;
+      color: var(--bleu);
+    }
+
+    .liste { display: grid; gap: 10px; }
+
+    .carte {
+      border: 1px solid var(--bordure);
+      border-radius: 18px;
+      background: var(--carte);
+      overflow: hidden;
+      box-shadow: var(--ombre);
+    }
+
+    .carte.en-cours { opacity: .65; }
+    .carte-avenir { border-style: dashed; box-shadow: none; }
+
+    .carte-haut {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 13px 10px;
+    }
+
+    .priorite { font-size: 24px; line-height: 1; }
+    .numero { font-size: 22px; font-weight: 950; }
+
+    .categorie {
+      margin-top: 2px;
+      color: var(--secondaire);
+      font-size: 12px;
+    }
+
+    .etat {
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .etat-a-faire { background: var(--rouge-fond); color: var(--rouge); }
+    .etat-a-verifier { background: var(--orange-fond); color: var(--orange); }
+    .etat-a-recontroler { background: var(--violet-fond); color: var(--violet); }
+
+    .details {
+      padding: 0 13px 12px;
+      color: var(--secondaire);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .details b { color: var(--texte); }
+
+    .action {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-top: 1px solid var(--bordure);
+      background: var(--bleu);
+      color: white;
+      font-weight: 950;
+      padding: 10px 13px;
+    }
+
+    .action.controle {
+      background: var(--vert);
+      color: white;
+    }
+
+    .vide {
+      padding: 22px 15px;
+      border: 1px dashed var(--bordure);
+      border-radius: 16px;
+      color: var(--secondaire);
+      background: var(--carte);
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .voile {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(10,18,28,.58);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      padding: 22px;
+      border: 1px solid var(--bordure);
+      border-radius: 22px;
+      background: var(--carte);
+      box-shadow: 0 18px 55px rgba(0,0,0,.28);
+    }
+
+    .modal h1, .modal h2 {
+      margin: 0 0 8px;
+      color: var(--bleu);
+    }
+
+    .modal p {
+      color: var(--secondaire);
+      line-height: 1.45;
+    }
+
+    .champ {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--bordure);
+      border-radius: 13px;
+      background: var(--carte);
+      color: var(--texte);
+    }
+
+    .bouton-principal,
+    .bouton-secondaire,
+    .bouton-danger {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 12px;
+      padding: 10px 13px;
+      border-radius: 13px;
+      font-weight: 900;
+    }
+
+    .bouton-principal {
+      border: 0;
+      background: var(--bleu);
+      color: white;
+    }
+
+    .bouton-secondaire {
+      border: 1px solid var(--bordure);
+      background: var(--carte);
+      color: var(--texte);
+    }
+
+    .bouton-danger {
+      border: 1px solid #e1b2ad;
+      background: var(--rouge-fond);
+      color: var(--rouge);
+    }
+
+    .option {
+      margin-top: 12px;
+      padding: 13px;
+      border: 1px solid var(--bordure);
+      border-radius: 15px;
+    }
+
+    .ligne-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .interrupteur {
+      appearance: none;
+      width: 52px;
+      height: 30px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: #9aa4af;
+      position: relative;
+    }
+
+    .interrupteur::after {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      transition: .16s;
+    }
+
+    .interrupteur:checked { background: var(--vert); }
+    .interrupteur:checked::after { transform: translateX(22px); }
+
+    .erreur {
+      margin: 12px 0;
+      padding: 13px;
+      border: 1px solid #e1b2ad;
+      border-radius: 14px;
+      background: var(--rouge-fond);
+      color: var(--rouge);
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      z-index: 200;
+      transform: translateX(-50%);
+      width: min(520px, calc(100% - 26px));
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #17202a;
+      color: white;
+      box-shadow: 0 12px 35px rgba(0,0,0,.30);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .note-securite {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: var(--vert-fond);
+      color: var(--vert);
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="entete">
+    <div class="ligne-entete">
+      <div>
+        <div class="titre-app">🏕️ CampManager</div>
+        <div class="sous-titre">V4 · accès sécurisé</div>
+      </div>
+      <div class="actions-entete">
+        <button id="boutonActualiser" class="bouton-icone" type="button" aria-label="Actualiser">↻</button>
+        <button id="boutonReglages" class="bouton-icone" type="button" aria-label="Réglages">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="bandeau-test">🔄 Synchronisation Google Sheets : délai habituel jusqu’à environ 1 à 2 minutes</div>
+
+  <main class="contenu">
+    <div id="erreurPrincipale" class="erreur cache"></div>
+
+    <section class="barre-etat">
+      <div>
+        <div id="nomUtilisateur" class="utilisateur">Utilisateur : —</div>
+        <div id="etatTechnique" class="etat-technique">Connexion…</div>
+      </div>
+      <div id="badgeVitesse" class="badge-vitesse">— ms</div>
+    </section>
+
+    <div class="titre-section">🧹 Mes tâches</div>
+    <section id="listeTaches" class="liste"></section>
+
+    <div id="zoneAvenir" class="cache">
+      <div class="titre-section">👀 Contrôles à venir</div>
+      <section id="listeAvenir" class="liste"></section>
+    </div>
+  </main>
+
+  <div id="voileConnexion" class="voile cache">
+    <div class="modal">
+      <h1>🔐 CampManager V4</h1>
+      <p>
+        Connectez-vous avec votre prénom et votre code PIN.
+        Pour une première connexion ou après un oubli, utilisez le code d’activation fourni par le responsable.
+      </p>
+
+      <div id="erreurConnexion" class="erreur cache"></div>
+
+      <div id="zonePrenomMemorise" class="option cache">
+        <b id="textePrenomMemorise">Bonjour</b>
+        <div class="etat-technique">Votre prénom est reconnu sur cet appareil.</div>
+        <button id="changerPrenomConnexion" class="bouton-secondaire" type="button">
+          Changer de prénom
+        </button>
+      </div>
+
+      <input
+        id="champPrenom"
+        class="champ"
+        type="text"
+        autocomplete="given-name"
+        placeholder="Prénom"
+        maxlength="40"
+      >
+
+      <input
+        id="champPin"
+        class="champ"
+        type="password"
+        inputmode="numeric"
+        autocomplete="current-password"
+        placeholder="Votre code PIN"
+        maxlength="8"
+      >
+
+      <button id="boutonConnexion" class="bouton-principal" type="button">
+        Se connecter
+      </button>
+
+      <div class="note-securite">
+        🔒 Cinq codes erronés verrouillent temporairement l’accès pendant 10 minutes.
+      </div>
+    </div>
+  </div>
+
+  <div id="voileReglages" class="voile cache">
+    <div class="modal">
+      <h2>⚙️ Réglages V4</h2>
+
+      <div class="option">
+        <b>👤 Session</b>
+        <div id="prenomReglages" class="etat-technique">—</div>
+        <button id="boutonDeconnexion" class="bouton-danger" type="button">Se déconnecter</button>
+      </div>
+
+      <div class="option">
+        <div class="ligne-option">
+          <div>
+            <b>🌙 Mode sombre</b>
+            <div class="etat-technique">Conservé sur cet appareil.</div>
+          </div>
+          <input id="interrupteurSombre" class="interrupteur" type="checkbox">
+        </div>
+      </div>
+
+      <div class="option">
+        <b>ℹ️ Version</b>
+        <div id="versionReglages" class="etat-technique">—</div>
+      </div>
+
+      <button id="fermerReglages" class="bouton-secondaire" type="button">Fermer</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast cache"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.2/dist/umd/supabase.min.js"></script>
+  <script src="./config.production.js?v=1"></script>
+  <script src="./app-v4.js?v=503"></script>
+  <script src="./pin-v4.js?v=503"></script>
+</body>
+</html>

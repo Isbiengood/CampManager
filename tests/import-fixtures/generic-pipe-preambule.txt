@@ -1,4 +1,0 @@
-CampManager - test synthétique
-Export de réservations fictif
-Client|Arrivée|Départ|Hébergement|Type
-"Famille Dupont, Paris"|26/09/2026|29/09/2026|203|"Chalet Famille"

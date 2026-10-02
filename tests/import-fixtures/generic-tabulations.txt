@@ -1,5 +1,0 @@
-Rapport de réservations
-Export du 24/09/2026
-Nom du client	Date de début de séjour	Date de fin de séjour	N° emplacement	Catégorie empl
-Famille Martin	24/09/2026	27/09/2026	101	Mobil-home Confort
-Mme Durand	25/09/2026	28/09/2026	A2	Lodge Premium
