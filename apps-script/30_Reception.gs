@@ -2,7 +2,7 @@
  * =========================================================
  * CAMPMANAGER
  * MISE À JOUR DE LA FEUILLE RÉCEPTION
- * VERSION 2.21 OPEN SOURCE — DATES CALENDAIRES SÉCURISÉES
+ * VERSION 2.22 OPEN SOURCE — DÉPART RÉEL PROTÉGÉ
  * =========================================================
  *
  * Reconstruction sécurisée par numéro de logement :
@@ -1023,10 +1023,35 @@ function recalculerSituationReception_(
           aujourdHui
         );
 
+      /*
+       * IMPORTANT :
+       * un état "Prêt" peut avoir été conservé depuis la veille.
+       * Il ne prouve donc pas que le client sortant est réellement
+       * parti aujourd'hui.
+       *
+       * La seule preuve métier d'un départ validé est la colonne
+       * technique "Départ réel", renseignée au passage manuel sur
+       * "Parti".
+       */
+      const departReel =
+        convertirEnDateReception(
+          ligne[
+            COLONNES_RECEPTION.DEPART_REEL - 1
+          ]
+        );
+
+      const departReelAujourdhui =
+        departReel &&
+        sontMemeJourReception_(
+          departReel,
+          aujourdHui
+        );
+
       if (
         ancienEtat ===
           ETAT_RECEPTION.PRET &&
-        departSortantAujourdhui
+        departSortantAujourdhui &&
+        departReelAujourdhui
       ) {
         ligne[
           COLONNES_RECEPTION.CLIENT_ACTUEL - 1
@@ -1137,20 +1162,6 @@ function recalculerSituationReception_(
         situation.clientPresent &&
         sontMemeJourReception_(
           situation.clientPresent.dateDepart,
-          aujourdHui
-        );
-
-      const departReel =
-        convertirEnDateReception(
-          ligne[
-            COLONNES_RECEPTION.DEPART_REEL - 1
-          ]
-        );
-
-      const departReelAujourdhui =
-        departReel &&
-        sontMemeJourReception_(
-          departReel,
           aujourdHui
         );
 
