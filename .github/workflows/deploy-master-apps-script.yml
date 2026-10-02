@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "apps-script/30_Reception.gs"
+      - "apps-script/10_Menu.gs"
       - ".github/workflows/deploy-master-apps-script.yml"
 
   workflow_dispatch:
