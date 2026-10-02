@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17365d">
+  <title>CampManager · Créer mon installation</title>
+  <style>
+    :root{
+      --bleu:#17365d;--bleu2:#25558a;--fond:#f3f6fa;--carte:#fff;
+      --texte:#17202a;--muted:#66717d;--bord:#dfe4ea;--vert:#257b36;
+      --vertfond:#eaf6ec;--rouge:#b3261e;--rougefond:#fff1f0;
+      --ombre:0 18px 50px rgba(23,54,93,.13)
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--fond);color:var(--texte)}
+    body{background:radial-gradient(circle at 10% 0%,rgba(37,85,138,.14),transparent 34rem),linear-gradient(180deg,#edf3f9,#f7f9fc 55%,#f3f6fa)}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    button:disabled{opacity:.55;cursor:default}
+    .hero{padding:24px 18px 72px;background:linear-gradient(135deg,#112f52,#1e4b7b);color:#fff}
+    .wrap{width:min(760px,100%);margin:0 auto}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);font-size:24px}
+    .brand-title{font-weight:950;font-size:21px}
+    .brand-sub{font-size:12px;opacity:.82;margin-top:2px}
+    .badge{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);font-size:12px;font-weight:900}
+    h1{margin:40px 0 10px;font-size:clamp(30px,6vw,46px);line-height:1.03;letter-spacing:-.04em}
+    .hero p{max-width:620px;margin:0;line-height:1.55;opacity:.9}
+    main{padding:0 16px 42px}
+    .main{width:min(760px,100%);margin:-44px auto 0}
+    .card{background:var(--carte);border:1px solid var(--bord);border-radius:24px;box-shadow:var(--ombre);overflow:hidden}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);background:#fbfcfe;border-bottom:1px solid var(--bord)}
+    .step{padding:14px 8px;text-align:center;color:var(--muted);font-size:12px;font-weight:850}
+    .step b{display:block;color:var(--bleu);font-size:16px;margin-bottom:4px}
+    .content{padding:24px}
+    .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:950;color:var(--bleu2)}
+    h2{margin:7px 0 8px;font-size:26px;letter-spacing:-.025em}
+    .lead{margin:0 0 20px;color:var(--muted);line-height:1.55}
+    label{display:block;margin-bottom:7px;font-weight:850}
+    .input{width:100%;min-height:56px;padding:12px 14px;border:1px solid var(--bord);border-radius:15px;outline:none}
+    .input:focus{border-color:#7e9dc0;box-shadow:0 0 0 4px rgba(37,85,138,.1)}
+    .hint{margin-top:7px;color:var(--muted);font-size:12px;line-height:1.45}
+    .primary,.secondary,.copybtn{min-height:54px;border-radius:15px;font-weight:950;padding:12px 16px}
+    .primary{width:100%;margin-top:18px;border:0;background:var(--bleu);color:#fff;box-shadow:0 9px 22px rgba(23,54,93,.18)}
+    .secondary{width:100%;margin-top:10px;border:1px solid var(--bord);background:#fff;color:var(--texte)}
+    .primary:hover:not(:disabled){background:#0e2b4d}
+    .status{display:none;margin-top:16px;padding:13px 14px;border-radius:14px;font-size:14px;line-height:1.45;font-weight:750}
+    .status.error{display:block;background:var(--rougefond);color:var(--rouge);border:1px solid #e7b9b5}
+    .status.info{display:block;background:#eef4fb;color:var(--bleu);border:1px solid #cfdeee}
+    .success{display:none}
+    .success.show{display:block}
+    .successbox{margin-top:18px;padding:17px;border-radius:18px;background:var(--vertfond);border:1px solid #cce8d2}
+    .successtitle{color:var(--vert);font-size:17px;font-weight:950}
+    .successtext{margin-top:5px;color:#42634a;font-size:13px;line-height:1.45}
+    .codewrap{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:13px}
+    .code{min-width:0;padding:14px;border-radius:13px;background:#fff;border:1px solid #bddfc5;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;font-weight:950;overflow-wrap:anywhere}
+    .copybtn{width:auto;border:1px solid #bddfc5;background:#fff;color:var(--vert)}
+    .next{margin-top:20px;padding-top:19px;border-top:1px solid var(--bord)}
+    .next h3{margin:0 0 12px;color:var(--bleu);font-size:18px}
+    .instruction{display:grid;grid-template-columns:32px 1fr;gap:10px;margin:10px 0;align-items:start}
+    .num{width:28px;height:28px;border-radius:9px;background:#e9f0f8;color:var(--bleu);display:grid;place-items:center;font-size:12px;font-weight:950}
+    .instruction div:last-child{font-size:13px;line-height:1.45;color:var(--muted)}
+    .instruction strong{color:var(--texte)}
+    .note{margin-top:15px;padding:12px 13px;border-radius:13px;background:#faf7ee;border:1px solid #eadfc0;color:#735f22;font-size:12px;line-height:1.45}
+    .honeypot{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important}
+    footer{padding:22px 16px;color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:560px){
+      .hero{padding-top:18px;padding-bottom:66px}
+      .badge{display:none}
+      h1{margin-top:34px}
+      .content{padding:19px}
+      .step{font-size:10px;padding:12px 5px}
+      .codewrap{grid-template-columns:1fr}
+      .copybtn{width:100%}
+    }
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">🏕️</div>
+        <div>
+          <div class="brand-title">CampManager</div>
+          <div class="brand-sub">Ménage · Réception · Terrain</div>
+        </div>
+      </div>
+      <div class="badge">INSTALLATION OPEN SOURCE</div>
+    </div>
+    <h1>Créez votre CampManager</h1>
+    <p>Indiquez le nom de votre établissement, recevez votre code d’activation unique puis créez votre propre copie du MASTER Google Sheets.</p>
+  </div>
+</header>
+
+<main>
+  <div class="main">
+    <section class="card">
+      <div class="steps">
+        <div class="step"><b>1</b>Établissement</div>
+        <div class="step"><b>2</b>Code unique</div>
+        <div class="step"><b>3</b>Copie du MASTER</div>
+      </div>
+      <div class="content">
+        <div class="eyebrow">Installation CampManager</div>
+        <h2>Nom de votre établissement</h2>
+        <p class="lead">Camping, hôtel, résidence ou autre établissement : saisissez simplement son nom pour commencer.</p>
+
+        <form id="form" novalidate>
+          <label for="name">Nom de l’établissement</label>
+          <input id="name" class="input" type="text" maxlength="120" autocomplete="organization" placeholder="Ex. Camping des Rives du Lac" required>
+          <div class="hint">Vous réutiliserez ce nom au moment d’activer votre copie CampManager.</div>
+
+          <label class="honeypot" aria-hidden="true">Site internet
+            <input id="website" type="text" tabindex="-1" autocomplete="off">
+          </label>
+
+          <button id="generate" class="primary" type="submit">Générer mon code d’activation</button>
+        </form>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        <div id="success" class="success">
+          <div class="successbox">
+            <div class="successtitle">✓ Votre code d’activation est prêt</div>
+            <div class="successtext">Il est à usage unique et valable 7 jours. Conservez-le jusqu’à la fin de l’installation.</div>
+            <div class="codewrap">
+              <div id="code" class="code">—</div>
+              <button id="copyCode" class="copybtn" type="button">Copier</button>
+            </div>
+            <div id="expiry" class="hint"></div>
+          </div>
+
+          <div class="next">
+            <h3>Créer votre copie</h3>
+            <div class="instruction">
+              <div class="num">1</div>
+              <div><strong>Cliquez une première fois sur le bouton bleu</strong> pour copier le code. Le bouton confirmera « Code copié ✓ » avant de vous proposer d’ouvrir le MASTER.</div>
+            </div>
+            <div class="instruction">
+              <div class="num">2</div>
+              <div><strong>Cliquez une deuxième fois</strong> sur le bouton devenu « Ouvrir le MASTER et créer ma copie ».</div>
+            </div>
+            <div class="instruction">
+              <div class="num">3</div>
+              <div>Dans la copie, choisissez <strong>⚙️ Établissement / installation → 🚀 Installer un nouvel établissement</strong>, saisissez le nom puis <strong>collez le code</strong> avec Ctrl+V.</div>
+            </div>
+
+            <button id="copyMaster" class="primary" type="button">Copier le code avant de créer ma copie</button>
+            <button id="restart" class="secondary" type="button">Créer un code pour un autre établissement</button>
+
+            <div class="note">Un compte Google est nécessaire pour enregistrer la copie du fichier.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>CampManager · Installation open source</footer>
+
+<script>
+const REGISTER_URL="https://yjclaskssxtoqzpvtrnz.supabase.co/functions/v1/campmanager-public-register";
+const MASTER_COPY_URL="https://docs.google.com/spreadsheets/d/1h3gN0xc8uwu2em9o1n5omW9sjgaYwifSBe7pocoB5UM/copy";
+
+const form=document.getElementById("form");
+const nameInput=document.getElementById("name");
+const website=document.getElementById("website");
+const generate=document.getElementById("generate");
+const statusBox=document.getElementById("status");
+const success=document.getElementById("success");
+const codeBox=document.getElementById("code");
+const expiry=document.getElementById("expiry");
+const copyCode=document.getElementById("copyCode");
+const copyMaster=document.getElementById("copyMaster");
+const restart=document.getElementById("restart");
+let currentCode="";
+let codeCopiedForMaster=false;
+
+function setStatus(msg,type="info"){
+  statusBox.textContent=msg||"";
+  statusBox.className=msg?"status "+type:"status";
+}
+function setLoading(v){
+  generate.disabled=v;
+  nameInput.disabled=v;
+  generate.textContent=v?"Création de votre code…":"Générer mon code d’activation";
+}
+function formatDate(v){
+  if(!v)return "";
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return "";
+  return new Intl.DateTimeFormat("fr-FR",{dateStyle:"full",timeStyle:"short"}).format(d);
+}
+
+form.addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  const establishmentName=nameInput.value.trim();
+  if(establishmentName.length<2){
+    setStatus("Saisissez le nom de votre établissement.","error");
+    nameInput.focus();
+    return;
+  }
+
+  setLoading(true);
+  setStatus("Création de votre code sécurisé…","info");
+  success.classList.remove("show");
+
+  try{
+    const res=await fetch(REGISTER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        establishmentName,
+        website:website.value
+      })
+    });
+
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.ok){
+      throw new Error(data.message||"Impossible de créer le code.");
+    }
+
+    currentCode=String(data.codeInstallation||"");
+    codeCopiedForMaster=false;
+    copyMaster.textContent="Copier le code avant de créer ma copie";
+    if(!currentCode)throw new Error("Le serveur n’a pas renvoyé de code.");
+
+    codeBox.textContent=currentCode;
+    expiry.textContent=data.expiresAt?"Valable jusqu’au "+formatDate(data.expiresAt):"";
+    setStatus("");
+    success.classList.add("show");
+    success.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(err){
+    setStatus(err instanceof Error?err.message:String(err),"error");
+  }finally{
+    setLoading(false);
+  }
+});
+
+copyCode.addEventListener("click",async()=>{
+  if(!currentCode)return;
+  try{
+    await navigator.clipboard.writeText(currentCode);
+    copyCode.textContent="Copié ✓";
+    setTimeout(()=>copyCode.textContent="Copier",1600);
+  }catch(_){
+    window.prompt("Copiez votre code :",currentCode);
+  }
+});
+
+copyMaster.addEventListener("click",async()=>{
+  if(!currentCode){
+    setStatus("Aucun code d’activation n’est disponible.","error");
+    return;
+  }
+
+  if(!codeCopiedForMaster){
+    try{
+      if(!navigator.clipboard || !navigator.clipboard.writeText){
+        throw new Error("Presse-papiers non disponible");
+      }
+      await navigator.clipboard.writeText(currentCode);
+      codeCopiedForMaster=true;
+      copyMaster.textContent="Code copié ✓ — Ouvrir le MASTER et créer ma copie";
+      setStatus("Code copié avec succès. Cliquez maintenant une deuxième fois sur le bouton bleu pour ouvrir le MASTER.","info");
+      return;
+    }catch(_){
+      setStatus("La copie automatique du code a échoué. Utilisez d’abord le bouton « Copier » situé juste à côté du code, puis cliquez à nouveau ici.","error");
+      return;
+    }
+  }
+
+  window.open(MASTER_COPY_URL,"_blank","noopener,noreferrer");
+});
+
+restart.addEventListener("click",()=>{
+  currentCode="";
+  codeCopiedForMaster=false;
+  copyMaster.textContent="Copier le code avant de créer ma copie";
+  codeBox.textContent="—";
+  expiry.textContent="";
+  success.classList.remove("show");
+  setStatus("");
+  nameInput.value="";
+  nameInput.focus();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+</script>
+</body>
+</html>
