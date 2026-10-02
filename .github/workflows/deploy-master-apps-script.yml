@@ -1,6 +1,11 @@
 name: Mettre a jour le MASTER Apps Script
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-master-apps-script.yml"
 
   workflow_dispatch:
     inputs:
@@ -73,7 +78,8 @@ jobs:
           fi
 
           sed -i 's#https://hhgybhjozivgguiklpkw.supabase.co#https://yjclaskssxtoqzpvtrnz.supabase.co#g' "$CONFIG_FILE"
-          sed -i 's#v4-zero-to-one-test.html#v4-opensource-test.html#g' "$CONFIG_FILE"
+          sed -i 's#https://isbiengood.github.io/capfun-menage-mobile/v4-zero-to-one-test.html?v=1#https://isbiengood.github.io/CampManager/v4-opensource.html?v=1#g' "$CONFIG_FILE"
+          sed -i 's#https://isbiengood.github.io/capfun-menage-mobile/v4-opensource-test.html?v=1#https://isbiengood.github.io/CampManager/v4-opensource.html?v=1#g' "$CONFIG_FILE"
 
           echo "Configuration MASTER corrigée."
 
@@ -153,7 +159,7 @@ jobs:
         run: clasp status
 
       - name: Mettre a jour le MASTER
-        if: ${{ inputs.mode == 'deploiement' }}
+        if: ${{ github.event_name == 'push' || inputs.mode == 'deploiement' }}
         working-directory: ${{ runner.temp }}/campmanager-master
         run: |
           clasp push --force
