@@ -1,7 +1,7 @@
 /**
  * ============================================================
  * CAMP MANAGER — MENU PRINCIPAL MULTI-CAMPING
- * VERSION V4.2.8 MULTI-ÉTABLISSEMENT — IMPORT XLSX/TXT/CSV — 25/09/2026
+ * VERSION V4.2.9 MULTI-ÉTABLISSEMENT — RÉSERVATION AJOUTÉE APRÈS COUP
  * ============================================================
  *
  * Ce fichier remplace EN ENTIER l'ancien fichier 10_Menu.
@@ -2494,13 +2494,13 @@ function basculerClientsActuelsReceptionV4Securise_(
             COLONNES_RECEPTION.CLIENT_ACTUEL - 1
           ] || ""
         ).trim() === "" &&
-        (
-          sontMemeJourBasculeReceptionV4_(
-            clientPresent.dateDepart,
-            aujourdHui
-          ) ||
-          departReelConcerneClientPresent
-        )
+        /*
+         * Un départ théorique aujourd'hui ne suffit pas.
+         * Sans "Départ réel", il peut s'agir d'une réservation
+         * ajoutée après coup (ex. C : arrivé hier, départ aujourd'hui)
+         * qui doit immédiatement redevenir Client actuel / Occupé.
+         */
+        departReelConcerneClientPresent
       ) {
         ligne[
           COLONNES_RECEPTION.CLIENT_ACTUEL - 1
