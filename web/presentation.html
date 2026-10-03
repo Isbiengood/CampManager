@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17365d">
+  <meta name="description" content="CampManager : outil open source de coordination réception, ménage et terrain pour campings, hôtels et résidences.">
+  <title>CampManager · Réception, ménage et terrain</title>
+  <style>
+    :root{
+      --bleu:#17365d;
+      --bleu2:#25558a;
+      --bleuclair:#eaf1f8;
+      --fond:#f4f7fa;
+      --carte:#ffffff;
+      --texte:#17202a;
+      --muted:#647180;
+      --bord:#dce4ec;
+      --vert:#257b36;
+      --vertclair:#eaf6ec;
+      --orange:#a65a00;
+      --ombre:0 16px 42px rgba(23,54,93,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--fond);
+      color:var(--texte);
+      font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+      line-height:1.55;
+    }
+    a{color:inherit}
+    .wrap{width:min(1120px,calc(100% - 32px));margin:auto}
+    .hero{
+      background:
+        radial-gradient(circle at 85% 15%,rgba(255,255,255,.16),transparent 25rem),
+        linear-gradient(135deg,#102d4d,#1f507f);
+      color:#fff;
+      padding:22px 0 76px;
+    }
+    nav{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:950;font-size:21px}
+    .brand-logo{
+      width:43px;height:43px;display:grid;place-items:center;border-radius:14px;
+      background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.23)
+    }
+    .navlinks{display:flex;gap:18px;align-items:center;font-size:14px;font-weight:800}
+    .navlinks a{text-decoration:none;opacity:.9}
+    .navlinks .cta-small{padding:10px 14px;border:1px solid rgba(255,255,255,.35);border-radius:12px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:46px;align-items:center;
+      padding-top:68px
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);
+      font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em
+    }
+    h1{
+      margin:17px 0 18px;font-size:clamp(40px,7vw,70px);
+      line-height:.98;letter-spacing:-.055em
+    }
+    .hero p{max-width:690px;margin:0;font-size:18px;opacity:.9}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:27px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-height:52px;padding:12px 18px;border-radius:14px;
+      text-decoration:none;font-weight:950;border:1px solid transparent
+    }
+    .btn.primary{background:#fff;color:var(--bleu)}
+    .btn.secondary{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.08)}
+    .hero-card{
+      padding:22px;border-radius:24px;background:rgba(255,255,255,.11);
+      border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(8px)
+    }
+    .hero-card .screen{
+      background:#f7f9fc;border-radius:17px;padding:12px;color:var(--texte);
+      box-shadow:0 24px 60px rgba(0,0,0,.22)
+    }
+    .screen-top{display:flex;gap:5px;margin-bottom:12px}
+    .screen-top span{width:9px;height:9px;border-radius:50%;background:#c9d1da}
+    .mini-row{
+      display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center;
+      padding:10px;margin:7px 0;border:1px solid #e4e9ef;border-radius:12px;background:#fff
+    }
+    .mini-num{font-weight:950;color:var(--bleu)}
+    .mini-state{font-size:11px;font-weight:900;padding:5px 7px;border-radius:999px;background:#fff4df;color:#915100}
+    main{margin-top:-38px}
+    .section{
+      background:var(--carte);border:1px solid var(--bord);border-radius:26px;
+      box-shadow:var(--ombre);padding:38px;margin-bottom:24px
+    }
+    .section.flat{box-shadow:none;background:transparent;border:0;padding:34px 0}
+    h2{margin:0 0 10px;color:var(--bleu);font-size:clamp(27px,4vw,39px);letter-spacing:-.035em}
+    .lead{margin:0;color:var(--muted);font-size:17px;max-width:850px}
+    .problem-grid,.features,.shots{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px
+    }
+    .card{
+      padding:20px;border-radius:18px;border:1px solid var(--bord);background:#fff
+    }
+    .icon{
+      width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+      background:var(--bleuclair);font-size:21px;margin-bottom:13px
+    }
+    .card h3{margin:0 0 6px;color:var(--bleu);font-size:17px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .workflow{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px
+    }
+    .step{
+      position:relative;padding:18px;border-radius:18px;background:#f8fafc;border:1px solid var(--bord)
+    }
+    .step-num{
+      width:31px;height:31px;border-radius:10px;background:var(--bleu);color:#fff;
+      display:grid;place-items:center;font-weight:950;margin-bottom:11px
+    }
+    .step strong{display:block;color:var(--bleu);margin-bottom:5px}
+    .step span{font-size:13px;color:var(--muted)}
+    .shot{
+      overflow:hidden;border-radius:18px;border:1px solid var(--bord);background:#fff
+    }
+    .shot-placeholder{
+      aspect-ratio:16/10;display:grid;place-items:center;text-align:center;
+      background:
+        linear-gradient(135deg,rgba(23,54,93,.05),rgba(37,85,138,.10));
+      color:var(--muted);padding:20px
+    }
+    .shot-placeholder b{display:block;color:var(--bleu);font-size:17px;margin-bottom:5px}
+    .shot-caption{padding:14px 15px;font-size:13px;color:var(--muted)}
+    .video{
+      margin-top:25px;border-radius:22px;overflow:hidden;border:1px solid var(--bord);
+      background:#0d2138;color:#fff;aspect-ratio:16/9;display:grid;place-items:center;text-align:center;padding:25px
+    }
+    .play{
+      width:68px;height:68px;border-radius:50%;background:#fff;color:var(--bleu);
+      display:grid;place-items:center;margin:0 auto 14px;font-size:28px;padding-left:4px
+    }
+    .video small{opacity:.7}
+    .opensource{
+      display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;
+      padding:26px;border-radius:20px;background:var(--vertclair);border:1px solid #cde6d2;margin-top:26px
+    }
+    .opensource h3{margin:0 0 5px;color:var(--vert)}
+    .opensource p{margin:0;color:#496251}
+    .github-link{
+      display:inline-flex;white-space:nowrap;padding:11px 15px;border-radius:12px;
+      text-decoration:none;background:#fff;border:1px solid #cde6d2;color:var(--vert);font-weight:900
+    }
+    .final{
+      text-align:center;padding:48px 28px;background:linear-gradient(135deg,#112f52,#1f507f);
+      border-radius:26px;color:#fff;margin:24px 0 34px
+    }
+    .final h2{color:#fff}
+    .final p{max-width:720px;margin:0 auto;color:rgba(255,255,255,.85)}
+    footer{padding:8px 0 35px;color:var(--muted);font-size:13px;text-align:center}
+    @media(max-width:850px){
+      .hero-grid{grid-template-columns:1fr}
+      .hero-card{display:none}
+      .problem-grid,.features,.shots{grid-template-columns:1fr}
+      .workflow{grid-template-columns:1fr 1fr}
+      .opensource{grid-template-columns:1fr}
+    }
+    @media(max-width:580px){
+      .navlinks a:not(.cta-small){display:none}
+      .hero{padding-bottom:60px}
+      .hero-grid{padding-top:48px}
+      .section{padding:25px 19px}
+      .workflow{grid-template-columns:1fr}
+      .actions{display:grid}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <nav>
+      <div class="brand"><div class="brand-logo">🏕️</div>CampManager</div>
+      <div class="navlinks">
+        <a href="#fonctionnement">Fonctionnement</a>
+        <a href="#demonstration">Démonstration</a>
+        <a class="cta-small" href="./campmanager-inscription.html">Créer mon installation</a>
+      </div>
+    </nav>
+
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Open source · pensé depuis le terrain</div>
+        <h1>Réception, ménage et terrain enfin synchronisés.</h1>
+        <p>
+          CampManager centralise le suivi des hébergements, les priorités ménage,
+          les contrôles et les informations utiles à la réception dans un outil simple,
+          accessible depuis Google Sheets et sur mobile.
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="#demonstration">Voir la démonstration</a>
+          <a class="btn secondary" href="./campmanager-inscription.html">Créer une installation</a>
+        </div>
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <div class="screen">
+          <div class="screen-top"><span></span><span></span><span></span></div>
+          <div class="mini-row">
+            <div class="mini-num">A12</div>
+            <div><b>Départ aujourd'hui</b><br><small>Ménage prioritaire</small></div>
+            <div class="mini-state">À contrôler</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-num">B07</div>
+            <div><b>Arrivée 16:00</b><br><small>Contrôle gouvernante</small></div>
+            <div class="mini-state" style="background:#eaf6ec;color:#257b36">Prêt</div>
+          </div>
+          <div class="mini-row">
+            <div class="mini-num">C21</div>
+            <div><b>Occupé</b><br><small>Départ demain</small></div>
+            <div class="mini-state" style="background:#eaf1f8;color:#17365d">Réception</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="section">
+    <h2>Un problème très concret</h2>
+    <p class="lead">
+      Quand réception, ménage et terrain travaillent avec des informations dispersées,
+      les appels, messages et vérifications se multiplient. CampManager regroupe ces
+      informations dans un même flux de travail.
+    </p>
+    <div class="problem-grid">
+      <article class="card">
+        <div class="icon">📋</div>
+        <h3>Réception</h3>
+        <p>Visualiser les départs, arrivées, clients présents et l’état réel de chaque hébergement.</p>
+      </article>
+      <article class="card">
+        <div class="icon">🧹</div>
+        <h3>Ménage</h3>
+        <p>Affecter les tâches, suivre les priorités et faire progresser chaque logement jusqu’au contrôle.</p>
+      </article>
+      <article class="card">
+        <div class="icon">✅</div>
+        <h3>Contrôle</h3>
+        <p>Valider séparément le ménage puis le contrôle gouvernante avant le passage à « Prêt ».</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="fonctionnement" class="section">
+    <h2>Comment ça fonctionne</h2>
+    <p class="lead">Une logique simple, pensée pour être utilisable sans logiciel métier complexe.</p>
+    <div class="workflow">
+      <div class="step"><div class="step-num">1</div><strong>Importer</strong><span>Les réservations arrivent dans Google Sheets.</span></div>
+      <div class="step"><div class="step-num">2</div><strong>Organiser</strong><span>Réception et ménage voient les priorités et les logements concernés.</span></div>
+      <div class="step"><div class="step-num">3</div><strong>Mettre à jour</strong><span>Le personnel agit depuis le mobile ou Google Sheets.</span></div>
+      <div class="step"><div class="step-num">4</div><strong>Synchroniser</strong><span>Les changements sont partagés entre les équipes.</span></div>
+    </div>
+
+    <div class="features">
+      <article class="card"><div class="icon">📱</div><h3>Mobile</h3><p>Interface adaptée aux femmes de chambre et gouvernantes, avec accès sécurisé par prénom et PIN.</p></article>
+      <article class="card"><div class="icon">🏨</div><h3>Multi-établissement</h3><p>Une même architecture peut gérer plusieurs établissements avec des données séparées.</p></article>
+      <article class="card"><div class="icon">⚙️</div><h3>Installation guidée</h3><p>Création d’une copie du MASTER et activation par code unique en quelques minutes.</p></article>
+    </div>
+  </section>
+
+  <section id="demonstration" class="section">
+    <h2>CampManager en images</h2>
+    <p class="lead">
+      Les captures ci-dessous seront remplacées par les écrans réels de l’application.
+    </p>
+    <div class="shots">
+      <div class="shot">
+        <div class="shot-placeholder"><div><b>Capture 1</b>Vue Réception</div></div>
+        <div class="shot-caption">Départs, arrivées, client actuel, client suivant et état du logement.</div>
+      </div>
+      <div class="shot">
+        <div class="shot-placeholder"><div><b>Capture 2</b>Vue Ménage</div></div>
+        <div class="shot-caption">Affectations, priorités et progression du ménage.</div>
+      </div>
+      <div class="shot">
+        <div class="shot-placeholder"><div><b>Capture 3</b>Application mobile</div></div>
+        <div class="shot-caption">Tâches et contrôles accessibles directement sur téléphone.</div>
+      </div>
+    </div>
+
+    <div class="video">
+      <div>
+        <div class="play">▶</div>
+        <h3 style="margin:0 0 5px;font-size:23px">Mini démonstration vidéo</h3>
+        <small>La vidéo sera intégrée ici dès qu’elle sera enregistrée.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Un projet ouvert et évolutif</h2>
+    <p class="lead">
+      CampManager est construit avec Google Sheets / Apps Script, une application web mobile
+      et un backend Supabase. Le code du projet est accessible publiquement pour permettre
+      son évolution et son adaptation.
+    </p>
+    <div class="opensource">
+      <div>
+        <h3>Open source</h3>
+        <p>Le dépôt contient le code, les modules Apps Script, le backend et la documentation du projet.</p>
+      </div>
+      <a class="github-link" href="https://github.com/Isbiengood/CampManager" target="_blank" rel="noopener noreferrer">Voir le projet GitHub</a>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Tester CampManager</h2>
+    <p>
+      Créez votre installation, copiez le MASTER et découvrez le fonctionnement
+      avec votre propre établissement.
+    </p>
+    <div class="actions" style="justify-content:center">
+      <a class="btn primary" href="./campmanager-inscription.html">Créer mon CampManager</a>
+      <a class="btn secondary" href="https://github.com/Isbiengood/CampManager" target="_blank" rel="noopener noreferrer">Consulter le code source</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">CampManager · Réception · Ménage · Terrain · Open source</div>
+</footer>
+</body>
+</html>
