@@ -132,8 +132,22 @@
     .shot-caption{padding:14px 15px;font-size:13px;color:var(--muted)}
     .shot-caption strong{color:var(--bleu);font-size:14px}
     .shot img{width:100%;height:auto;display:block;background:#f7f9fc}
-    .demo-grid{display:grid;gap:18px;margin-top:26px}
-    .demo-secondary{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .media-story{display:grid;gap:18px;margin-top:26px}
+    .media-row{
+      display:grid;grid-template-columns:minmax(0,1.65fr) minmax(240px,.7fr);
+      gap:24px;align-items:center;padding:18px;border:1px solid var(--bord);
+      border-radius:20px;background:#fff
+    }
+    .media-row.reverse{grid-template-columns:minmax(240px,.7fr) minmax(0,1.65fr)}
+    .media-row.reverse .media-image{order:2}
+    .media-row.reverse .media-copy{order:1}
+    .media-image{display:flex;justify-content:center;align-items:center;overflow:hidden;border-radius:14px;background:#f7f9fc}
+    .media-image img{display:block;width:auto;height:auto;max-width:100%}
+    .media-image.reception img{width:min(100%,1050px)}
+    .media-image.menage img{width:min(100%,720px)}
+    .media-image.mobile img{width:min(100%,500px)}
+    .media-copy h3{margin:0 0 8px;color:var(--bleu);font-size:20px}
+    .media-copy p{margin:0;color:var(--muted);font-size:14px}
     .video{
       margin-top:28px;border-radius:22px;overflow:hidden;border:1px solid var(--bord);
       background:#000;aspect-ratio:16/9;padding:0
@@ -163,7 +177,8 @@
       .hero-card{display:none}
       .problem-grid,.features,.shots{grid-template-columns:1fr}
       .workflow{grid-template-columns:1fr 1fr}
-      .demo-secondary{grid-template-columns:1fr}
+      .media-row,.media-row.reverse{grid-template-columns:1fr}
+      .media-row.reverse .media-image,.media-row.reverse .media-copy{order:initial}
       .opensource{grid-template-columns:1fr}
     }
     @media(max-width:580px){
@@ -274,33 +289,37 @@
   <section id="demonstration" class="section">
     <h2>CampManager en images</h2>
     <p class="lead">
-      Un aperçu concret de la réception, du suivi ménage et de l’application mobile sur le terrain.
+      Trois vues complémentaires pour comprendre le fonctionnement sans se perdre dans les détails.
     </p>
 
-    <div class="demo-grid">
-      <div class="shot shot-main">
-        <img src="./campmanager-reception.webp" alt="CampManager — vue Réception avec départs, arrivées et état des hébergements" loading="lazy">
-        <div class="shot-caption">
-          <strong>Réception</strong><br>
-          Une vision immédiate des départs, arrivées, clients présents, clients suivants et de l’état de chaque hébergement.
+    <div class="media-story">
+      <div class="media-row">
+        <div class="media-image reception">
+          <img src="./campmanager-reception.webp" alt="CampManager — vue Réception" loading="lazy">
+        </div>
+        <div class="media-copy">
+          <h3>Réception</h3>
+          <p>Départs, arrivées, clients présents, client suivant, état du logement et affectations sont visibles dans une seule vue.</p>
         </div>
       </div>
 
-      <div class="demo-secondary">
-        <div class="shot">
-          <img src="./campmanager-menage.webp" alt="CampManager — vue Ménage avec personnel, priorités et contrôles" loading="lazy">
-          <div class="shot-caption">
-            <strong>Ménage</strong><br>
-            Affectation du personnel, priorités et double validation ménage / contrôle.
-          </div>
+      <div class="media-row reverse">
+        <div class="media-image menage">
+          <img src="./campmanager-menage.webp" alt="CampManager — vue Ménage" loading="lazy">
         </div>
+        <div class="media-copy">
+          <h3>Ménage</h3>
+          <p>Le personnel, les priorités et les contrôles sont regroupés dans une feuille simple à lire et à mettre à jour.</p>
+        </div>
+      </div>
 
-        <div class="shot">
-          <img src="./campmanager-mobile.webp" alt="CampManager — application mobile avec tâches de ménage et contrôles" loading="lazy">
-          <div class="shot-caption">
-            <strong>Application mobile</strong><br>
-            Chaque collaborateur retrouve ses tâches et peut les faire progresser directement depuis son téléphone.
-          </div>
+      <div class="media-row">
+        <div class="media-image mobile">
+          <img src="./campmanager-mobile.webp" alt="CampManager — application mobile" loading="lazy">
+        </div>
+        <div class="media-copy">
+          <h3>Application mobile</h3>
+          <p>Chaque collaborateur retrouve les tâches qui le concernent et fait progresser leur état directement depuis son téléphone.</p>
         </div>
       </div>
     </div>
