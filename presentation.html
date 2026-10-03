@@ -130,15 +130,17 @@
     }
     .shot-placeholder b{display:block;color:var(--bleu);font-size:17px;margin-bottom:5px}
     .shot-caption{padding:14px 15px;font-size:13px;color:var(--muted)}
+    .shot-caption strong{color:var(--bleu);font-size:14px}
+    .shot img{width:100%;height:auto;display:block;background:#f7f9fc}
+    .demo-grid{display:grid;gap:18px;margin-top:26px}
+    .demo-secondary{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     .video{
-      margin-top:25px;border-radius:22px;overflow:hidden;border:1px solid var(--bord);
-      background:#0d2138;color:#fff;aspect-ratio:16/9;display:grid;place-items:center;text-align:center;padding:25px
+      margin-top:28px;border-radius:22px;overflow:hidden;border:1px solid var(--bord);
+      background:#000;aspect-ratio:16/9;padding:0
     }
-    .play{
-      width:68px;height:68px;border-radius:50%;background:#fff;color:var(--bleu);
-      display:grid;place-items:center;margin:0 auto 14px;font-size:28px;padding-left:4px
-    }
-    .video small{opacity:.7}
+    .video iframe{width:100%;height:100%;border:0;display:block}
+    .video-caption{margin-top:10px;color:var(--muted);font-size:13px}
+    .video-caption strong{color:var(--bleu);font-size:14px}
     .opensource{
       display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;
       padding:26px;border-radius:20px;background:var(--vertclair);border:1px solid #cde6d2;margin-top:26px
@@ -161,6 +163,7 @@
       .hero-card{display:none}
       .problem-grid,.features,.shots{grid-template-columns:1fr}
       .workflow{grid-template-columns:1fr 1fr}
+      .demo-secondary{grid-template-columns:1fr}
       .opensource{grid-template-columns:1fr}
     }
     @media(max-width:580px){
@@ -271,29 +274,50 @@
   <section id="demonstration" class="section">
     <h2>CampManager en images</h2>
     <p class="lead">
-      Les captures ci-dessous seront remplacées par les écrans réels de l’application.
+      Un aperçu concret de la réception, du suivi ménage et de l’application mobile sur le terrain.
     </p>
-    <div class="shots">
-      <div class="shot">
-        <div class="shot-placeholder"><div><b>Capture 1</b>Vue Réception</div></div>
-        <div class="shot-caption">Départs, arrivées, client actuel, client suivant et état du logement.</div>
+
+    <div class="demo-grid">
+      <div class="shot shot-main">
+        <img src="./campmanager-reception.webp" alt="CampManager — vue Réception avec départs, arrivées et état des hébergements" loading="lazy">
+        <div class="shot-caption">
+          <strong>Réception</strong><br>
+          Une vision immédiate des départs, arrivées, clients présents, clients suivants et de l’état de chaque hébergement.
+        </div>
       </div>
-      <div class="shot">
-        <div class="shot-placeholder"><div><b>Capture 2</b>Vue Ménage</div></div>
-        <div class="shot-caption">Affectations, priorités et progression du ménage.</div>
-      </div>
-      <div class="shot">
-        <div class="shot-placeholder"><div><b>Capture 3</b>Application mobile</div></div>
-        <div class="shot-caption">Tâches et contrôles accessibles directement sur téléphone.</div>
+
+      <div class="demo-secondary">
+        <div class="shot">
+          <img src="./campmanager-menage.webp" alt="CampManager — vue Ménage avec personnel, priorités et contrôles" loading="lazy">
+          <div class="shot-caption">
+            <strong>Ménage</strong><br>
+            Affectation du personnel, priorités et double validation ménage / contrôle.
+          </div>
+        </div>
+
+        <div class="shot">
+          <img src="./campmanager-mobile.webp" alt="CampManager — application mobile avec tâches de ménage et contrôles" loading="lazy">
+          <div class="shot-caption">
+            <strong>Application mobile</strong><br>
+            Chaque collaborateur retrouve ses tâches et peut les faire progresser directement depuis son téléphone.
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="video">
-      <div>
-        <div class="play">▶</div>
-        <h3 style="margin:0 0 5px;font-size:23px">Mini démonstration vidéo</h3>
-        <small>La vidéo sera intégrée ici dès qu’elle sera enregistrée.</small>
-      </div>
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/CBCmRyIEia4?rel=0&cc_load_policy=1&hl=fr"
+        title="CampManager — démonstration vidéo"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="video-caption">
+      <strong>Démonstration en environ 1 minute</strong><br>
+      Réception, ménage et application mobile reliés dans un même flux de travail.
     </div>
   </section>
 
