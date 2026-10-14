@@ -407,7 +407,7 @@
 (function(){
   const endpoint="https://ebktlmglucuqyqywrtph.supabase.co/functions/v1/product-trial-analytics";
   const params=new URLSearchParams(location.search);
-  const raw=(params.get("camping")||"unknown").toLowerCase();
+  const raw=(params.get("camping")||"unknown").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9-]+/g,"-").replace(/^-+|-+$/g,"");
   const campaign=/^[a-z0-9-]{1,40}$/.test(raw)?raw:"unknown";
   function record(event_type){
     try {
